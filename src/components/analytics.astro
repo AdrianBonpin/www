@@ -1,0 +1,82 @@
+---
+
+---
+
+<div
+    id='analytics'
+    class='fixed bottom-4 right-4 transition-all bg-background px-5 py-4 max-w-full text-wrap flex flex-row gap-2 shadow-lg shadow-text/10 rounded-xl'
+    style='display: none;'
+>
+    <div>
+        This site collects anonymous analytics using <a
+            href='https://rybbit.dev'
+            target='_blank'
+            >Rybbit</a
+        >.<br /><span class='text-xs font-semibold text-text/60'
+            >You can opt-out by disabling JavaScript.</span
+        >
+    </div>
+    <button
+        id='analytics-accept'
+        class='bg-primary text-background px-4 py-2 rounded-lg font-pixel font-bold cursor-pointer hover:bg-primary/60 transition-colors'
+        >Accept</button
+    >
+</div>
+
+<script>
+    const STORAGE_KEY = "analytics-consent"
+    const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
+
+    function checkAndShowAnalytics() {
+        const analyticsElement = document.getElementById("analytics")
+        if (!analyticsElement) return
+
+        // Check if user has previously accepted
+        const storedConsent = localStorage.getItem(STORAGE_KEY)
+
+        if (storedConsent) {
+            try {
+                const { accepted, timestamp } = JSON.parse(storedConsent)
+                const now = Date.now()
+
+                // If accepted and less than a week has passed, keep it hidden
+                if (accepted && now - timestamp < ONE_WEEK_MS) {
+                    return // Keep hidden
+                }
+            } catch (e) {
+                // If there's an error parsing, clear the storage and show the prompt
+                localStorage.removeItem(STORAGE_KEY)
+            }
+        }
+
+        // Show the analytics prompt
+        analyticsElement.style.display = "flex"
+    }
+
+    function handleAccept() {
+        const analyticsElement = document.getElementById("analytics")
+        if (!analyticsElement) return
+
+        // Save acceptance with current timestamp
+        const consentData = {
+            accepted: true,
+            timestamp: Date.now(),
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(consentData))
+
+        // Hide the prompt
+        analyticsElement.style.display = "none"
+    }
+
+    // Initialize on page load
+    document.addEventListener("DOMContentLoaded", () => {
+        checkAndShowAnalytics()
+
+        // Add click handler to accept button
+        const acceptButton = document.getElementById("analytics-accept")
+        if (acceptButton) {
+            acceptButton.addEventListener("click", handleAccept)
+        }
+    })
+</script>
+<script></script>

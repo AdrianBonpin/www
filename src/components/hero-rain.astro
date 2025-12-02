@@ -1,0 +1,378 @@
+<div
+    id='ascii-container'
+    class='w-full flex-1'
+>
+    <canvas id='ascii-canvas'></canvas>
+</div>
+<script>
+    interface Particle {
+        x: number
+        y: number
+        vx: number
+        vy: number
+    }
+
+    const CONFIG = {
+        particleDensity: 0.47, // Particles per pixel width (~900 for 1920px, ~180 for 375px)
+        minParticles: 100, // Minimum particle count for very small screens
+        maxParticles: 1200, // Maximum particle count for very large screens
+        charSize: 20,
+        friction: 0.92,
+        gravityScale: 0.5,
+        mouseForce: 1.5,
+        mouseRadius: 100,
+        interactionRadius: 14,
+        densityMap: [" ", "·", ":", "o", "x", "%", "#", "@"],
+        textColor: "#eb8317",
+        rainRate: 0.03,
+        stagnantThreshold: 2.0,
+    }
+
+    class AsciiLiquid {
+        private container: HTMLElement
+        private canvas: HTMLCanvasElement
+        private ctx: CanvasRenderingContext2D
+        private mouse: { x: number; y: number }
+        private gravity: { x: number; y: number }
+        private width: number
+        private height: number
+        private particles: Particle[]
+        private cols: number = 0
+        private rows: number = 0
+
+        constructor(containerId: string, canvasId: string) {
+            this.container = document.getElementById(containerId) as HTMLElement
+            this.canvas = document.getElementById(canvasId) as HTMLCanvasElement
+            this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D
+
+            this.mouse = { x: -1000, y: -1000 }
+            this.gravity = { x: 0, y: 0.5 } // Default down
+
+            this.width = 0
+            this.height = 0
+            this.particles = []
+
+            this.init()
+            this.loop()
+        }
+
+        init() {
+            this.bindEvents()
+            this.resize()
+            this.spawnParticles()
+        }
+
+        calculateParticleCount(): number {
+            const count = Math.floor(this.width * CONFIG.particleDensity)
+            return Math.max(
+                CONFIG.minParticles,
+                Math.min(CONFIG.maxParticles, count)
+            )
+        }
+
+        resize() {
+            const rect = this.container.getBoundingClientRect()
+            this.width = rect.width
+            this.height = rect.height
+
+            this.canvas.width = this.width
+            this.canvas.height = this.height
+
+            this.cols = Math.ceil(this.width / CONFIG.charSize)
+            this.rows = Math.ceil(this.height / CONFIG.charSize)
+
+            // Adjust particle count based on new width
+            const targetCount = this.calculateParticleCount()
+            const currentCount = this.particles.length
+
+            if (targetCount > currentCount) {
+                // Add more particles
+                for (let i = currentCount; i < targetCount; i++) {
+                    this.particles.push({
+                        x: Math.random() * this.width,
+                        y: Math.random() * this.height,
+                        vx: (Math.random() - 0.5) * 5,
+                        vy: (Math.random() - 0.5) * 5,
+                    })
+                }
+            } else if (targetCount < currentCount) {
+                // Remove excess particles
+                this.particles.length = targetCount
+            }
+
+            // Keep remaining particles inside on resize
+            this.particles.forEach((p) => {
+                if (p.x > this.width) p.x = this.width - 20
+                if (p.y > this.height) p.y = this.height - 20
+            })
+        }
+
+        spawnParticles() {
+            this.particles = []
+            const particleCount = this.calculateParticleCount()
+            for (let i = 0; i < particleCount; i++) {
+                this.particles.push({
+                    x: Math.random() * this.width,
+                    y: Math.random() * this.height,
+                    vx: (Math.random() - 0.5) * 5,
+                    vy: (Math.random() - 0.5) * 5,
+                })
+            }
+        }
+
+        bindEvents() {
+            const observer = new ResizeObserver(() => this.resize())
+            observer.observe(this.container)
+
+            this.container.addEventListener("mousemove", (e: MouseEvent) => {
+                const rect = this.container.getBoundingClientRect()
+                this.mouse.x = e.clientX - rect.left
+                this.mouse.y = e.clientY - rect.top
+            })
+
+            this.container.addEventListener("mouseleave", () => {
+                this.mouse.x = -1000
+                this.mouse.y = -1000
+            })
+
+            window.addEventListener(
+                "deviceorientation",
+                (e: DeviceOrientationEvent) => {
+                    if (e.gamma !== null && e.beta !== null) {
+                        const xGravity =
+                            Math.min(Math.max(e.gamma, -45), 45) / 45
+                        const yGravity =
+                            Math.min(Math.max(e.beta, -45), 45) / 45
+                        this.gravity.x = xGravity * 0.8
+                        this.gravity.y = yGravity * 0.8
+                    }
+                }
+            )
+        }
+
+        // Moves a particle from the "drain" to the "source"
+        respawnParticle(p: Particle) {
+            const gx = this.gravity.x
+            const gy = this.gravity.y
+            const margin = 10
+
+            // Determine dominant gravity axis to find the "Top"
+            if (Math.abs(gx) > Math.abs(gy)) {
+                // Horizontal Gravity
+                if (gx > 0) {
+                    // Gravity is pulling Right -> Spawn Left
+                    p.x = margin
+                    p.y = Math.random() * this.height
+                } else {
+                    // Gravity is pulling Left -> Spawn Right
+                    p.x = this.width - margin
+                    p.y = Math.random() * this.height
+                }
+            } else {
+                // Vertical Gravity
+                if (gy > 0) {
+                    // Gravity is pulling Down -> Spawn Top
+                    p.x = Math.random() * this.width
+                    p.y = margin
+                } else {
+                    // Gravity is pulling Up -> Spawn Bottom
+                    p.x = Math.random() * this.width
+                    p.y = this.height - margin
+                }
+            }
+
+            // Reset energy
+            p.vx = (Math.random() - 0.5) * 2
+            p.vy = (Math.random() - 0.5) * 2
+        }
+
+        resolveCollisions() {
+            const cellSize = CONFIG.interactionRadius * 2
+            const gridCols = Math.ceil(this.width / cellSize)
+            const gridRows = Math.ceil(this.height / cellSize)
+
+            const grid: Particle[][] = Array.from(
+                { length: gridCols * gridRows },
+                () => []
+            )
+
+            for (let p of this.particles) {
+                const c = Math.floor(p.x / cellSize)
+                const r = Math.floor(p.y / cellSize)
+                if (c >= 0 && c < gridCols && r >= 0 && r < gridRows) {
+                    grid[r * gridCols + c].push(p)
+                }
+            }
+
+            for (let p of this.particles) {
+                const c = Math.floor(p.x / cellSize)
+                const r = Math.floor(p.y / cellSize)
+
+                for (let i = -1; i <= 1; i++) {
+                    for (let j = -1; j <= 1; j++) {
+                        const nc = c + i
+                        const nr = r + j
+
+                        if (
+                            nc >= 0 &&
+                            nc < gridCols &&
+                            nr >= 0 &&
+                            nr < gridRows
+                        ) {
+                            const cell = grid[nr * gridCols + nc]
+                            for (let other of cell) {
+                                if (p === other) continue
+
+                                const dx = p.x - other.x
+                                const dy = p.y - other.y
+                                const distSq = dx * dx + dy * dy
+                                const minDist = CONFIG.interactionRadius
+
+                                if (distSq > 0 && distSq < minDist * minDist) {
+                                    const dist = Math.sqrt(distSq)
+                                    const force = (minDist - dist) / minDist
+                                    const tx = (dx / dist) * force * 0.8
+                                    const ty = (dy / dist) * force * 0.8
+                                    p.vx += tx
+                                    p.vy += ty
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        updatePhysics() {
+            const cx = this.width / 2
+            const cy = this.height / 2
+
+            for (let p of this.particles) {
+                // Apply Gravity
+                p.vx += this.gravity.x * CONFIG.gravityScale
+                p.vy += this.gravity.y * CONFIG.gravityScale
+
+                // Mouse Repulsion
+                const dx = p.x - this.mouse.x
+                const dy = p.y - this.mouse.y
+                const dist = Math.sqrt(dx * dx + dy * dy)
+                if (dist < CONFIG.mouseRadius) {
+                    const force =
+                        (CONFIG.mouseRadius - dist) / CONFIG.mouseRadius
+                    const angle = Math.atan2(dy, dx)
+                    p.vx += Math.cos(angle) * force * CONFIG.mouseForce
+                    p.vy += Math.sin(angle) * force * CONFIG.mouseForce
+                }
+
+                // Friction
+                p.vx *= CONFIG.friction
+                p.vy *= CONFIG.friction
+
+                // Move
+                p.x += p.vx
+                p.y += p.vy
+
+                // Wall Bounds
+                const margin = CONFIG.charSize
+                if (p.x < margin) {
+                    p.x = margin
+                    p.vx *= -0.6
+                }
+                if (p.x > this.width - margin) {
+                    p.x = this.width - margin
+                    p.vx *= -0.6
+                }
+                if (p.y < margin) {
+                    p.y = margin
+                    p.vy *= -0.6
+                }
+                if (p.y > this.height - margin) {
+                    p.y = this.height - margin
+                    p.vy *= -0.6
+                }
+
+                // --- RAIN CYCLE LOGIC ---
+                // Check if particle is "stagnant" (moving slowly)
+                const speedSq = p.vx * p.vx + p.vy * p.vy
+
+                if (speedSq < CONFIG.stagnantThreshold) {
+                    // Random chance to recycle based on config
+                    if (Math.random() < CONFIG.rainRate) {
+                        // Check if particle is "downstream" relative to gravity
+                        // (i.e., is it at the bottom of the pile?)
+                        const relX = p.x - cx
+                        const relY = p.y - cy
+
+                        // Dot product: > 0 means it's in the direction gravity is pointing
+                        const depth =
+                            relX * this.gravity.x + relY * this.gravity.y
+
+                        // Only recycle if it's actually deep in the liquid (positive depth)
+                        if (depth > 0) {
+                            this.respawnParticle(p)
+                        }
+                    }
+                }
+            }
+
+            this.resolveCollisions()
+        }
+
+        render() {
+            this.ctx.fillStyle = "#f4f6ff"
+            this.ctx.fillRect(0, 0, this.width, this.height)
+
+            const grid = new Float32Array(this.cols * this.rows).fill(0)
+
+            for (let p of this.particles) {
+                const c = Math.floor(p.x / CONFIG.charSize)
+                const r = Math.floor(p.y / CONFIG.charSize)
+
+                if (c >= 0 && c < this.cols && r >= 0 && r < this.rows) {
+                    const idx = r * this.cols + c
+                    grid[idx] += 1
+                    if (c + 1 < this.cols) grid[idx + 1] += 0.5
+                    if (c - 1 >= 0) grid[idx - 1] += 0.5
+                    if (r + 1 < this.rows) grid[idx + this.cols] += 0.5
+                    if (r - 1 >= 0) grid[idx - this.cols] += 0.5
+                }
+            }
+
+            this.ctx.fillStyle = CONFIG.textColor
+            this.ctx.font = `${CONFIG.charSize}px monospace`
+            this.ctx.textBaseline = "middle"
+            this.ctx.textAlign = "center"
+
+            for (let r = 0; r < this.rows; r++) {
+                for (let c = 0; c < this.cols; c++) {
+                    const idx = r * this.cols + c
+                    const val = grid[idx]
+
+                    if (val > 0.3) {
+                        let charIdx = Math.floor(val)
+                        if (charIdx >= CONFIG.densityMap.length)
+                            charIdx = CONFIG.densityMap.length - 1
+
+                        if (charIdx > 0) {
+                            this.ctx.fillText(
+                                CONFIG.densityMap[charIdx],
+                                c * CONFIG.charSize + CONFIG.charSize / 2,
+                                r * CONFIG.charSize + CONFIG.charSize / 2
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        loop() {
+            this.updatePhysics()
+            this.render()
+            requestAnimationFrame(() => this.loop())
+        }
+    }
+
+    window.onload = () => {
+        new AsciiLiquid("ascii-container", "ascii-canvas")
+    }
+</script>

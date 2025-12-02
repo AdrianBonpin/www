@@ -1,1 +1,12 @@
 @import "tailwindcss";
+
+@theme {
+    --default-transition-duration: 300ms;
+    --font-pixel: "Fusion Pixel 12px Monospaced JP", sans-serif;
+    --font-sans: "Raleway Variable", sans-serif;
+    --font-serif: "Lora Variable", serif;
+    --color-background: #f4f6ff;
+    --color-text: #10375c;
+    --color-primary: #f3c623;
+    --color-secondary: #eb8317;
+}

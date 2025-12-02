@@ -9,6 +9,8 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@fontsource-variable/lora": "^5.2.8",
+    "@fontsource-variable/raleway": "^5.2.8",
     "@fontsource/fusion-pixel-12px-monospaced-jp": "^5.2.5",
     "@lucide/astro": "^0.555.0",
     "@tailwindcss/vite": "^4.1.17",

@@ -1,16 +1,38 @@
 ---
-
+import HeroRain from "../components/hero-rain.astro"
+import Base from "../layouts/base.astro"
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Base>
+    <section
+        id='hero'
+        class='w-full min-h-dvh flex flex-col justify-center pt-14 select-none'
+    >
+        <div
+            class='w-full flex flex-row md:justify-end max-w-7xl mx-auto text-4xl py-10 px-4'
+        >
+            Building Dreams.<br />One Line at a Time.
+        </div>
+        <HeroRain />
+        <div
+            class='w-full max-w-7xl mx-auto text-xl px-4 text-center font-pixel py-4'
+        >
+            v Scroll Down v
+        </div>
+    </section>
+    <section
+        id='work'
+        class='w-full flex flex-col items-center min-h-[calc(100dvh-56px)]'
+    >
+        <div class='w-full max-w-7xl text-4xl px-4 mx-auto mt-10'>
+            Elevate your online presence<br />with a <span
+                class='font-serif italic text-secondary'>custom</span
+            > website.
+        </div>
+        <div
+            class='w-full text-3xl text-center py-4 my-8 italic font-serif border-y border-text'
+        >
+            No Templates. No Duplicates. Just You.
+        </div>
+    </section>
+</Base>

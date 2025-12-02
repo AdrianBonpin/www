@@ -1,0 +1,32 @@
+---
+export const routes = ["projects", "about", "contact"]
+---
+
+<nav
+    class='fixed top-0 z-10 flex justify-center px-4 py-2 w-full bg-background'
+>
+    <div
+        class='w-full flex flex-row gap-2 justify-between items-center max-w-7xl'
+    >
+        <a
+            title='Home'
+            href='/'
+            class='font-pixel text-3xl font-bold hover:bg-text hover:text-background px-2 transition-colors'
+            >ab</a
+        >
+        <div class='flex flex-row gap-8'>
+            {
+                routes.map((route, idx) => (
+                    <a
+                        href={`/${route}`}
+                        title={`go to ${route}`}
+                        class={`font-pixel text-xl relative group ${Astro.url.pathname === `/${route}` ? "uppercase" : ""}`}
+                    >
+                        {route}
+                        <div class='absolute bottom-px left-0 right-0 group-hover:bg-primary bg-transparent h-px transition-colors' />
+                    </a>
+                ))
+            }
+        </div>
+    </div>
+</nav>

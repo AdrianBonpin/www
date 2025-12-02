@@ -1,0 +1,48 @@
+---
+import Navbar from "../components/navbar.astro"
+import "../styles/global.css"
+
+// Fonts
+import "@fontsource/fusion-pixel-12px-monospaced-jp"
+import "@fontsource-variable/raleway"
+import Analytics from "../components/analytics.astro"
+
+const { title } = Astro.props
+---
+
+<!doctype html>
+<html
+    lang='en'
+    class='antialiased'
+>
+    <head>
+        <meta charset='UTF-8' />
+        <meta
+            name='viewport'
+            content='width=device-width, initial-scale=1.0'
+        />
+        <meta
+            name='generator'
+            content={Astro.generator}
+        />
+        <title>{title ?? "Adrian Bonpin"}</title>
+        <link
+            rel='icon'
+            href='/favicon.png'
+            type='image/png'
+        />
+        <!-- Analytics -->
+        <script
+            src='https://analytics.ranlabs.space/api/script.js'
+            data-site-id='4'
+            defer
+        ></script>
+    </head>
+    <body
+        class='w-dvw h-dvh overflow-y-auto overscroll-none relative bg-background text-text flex flex-col'
+    >
+        <Navbar />
+        <slot />
+        <Analytics />
+    </body>
+</html>

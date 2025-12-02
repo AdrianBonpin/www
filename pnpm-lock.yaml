@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@fontsource-variable/lora':
+        specifier: ^5.2.8
+        version: 5.2.8
+      '@fontsource-variable/raleway':
+        specifier: ^5.2.8
+        version: 5.2.8
       '@fontsource/fusion-pixel-12px-monospaced-jp':
         specifier: ^5.2.5
         version: 5.2.5
@@ -225,6 +231,12 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@fontsource-variable/lora@5.2.8':
+    resolution: {integrity: sha512-cxjTJ9BbOWIzusewR4UMBLVePvTSWV6dtNaNsCkF/oKoyA68fJGWfaYCILOOP1BObE4dmjfZ3xo6m9hdHhtYhg==}
+
+  '@fontsource-variable/raleway@5.2.8':
+    resolution: {integrity: sha512-PahqGI7bkz4a80m91Jt65DRsuFQmRip5vGDbI9sChVSKjLrdDfXbeGIwnTPi/ZVCOoQrbLnqzBOLQpLohnz+WA==}
 
   '@fontsource/fusion-pixel-12px-monospaced-jp@5.2.5':
     resolution: {integrity: sha512-gcay8eMXvB2hULCLkkV0Hke2L5SPkIsV+MjiRxfztMf2hwwvyy6ud6UUPEmDwPp8owTCg937KYRip8yw1Q21rg==}
@@ -1871,6 +1883,10 @@ snapshots:
 
   '@esbuild/win32-x64@0.25.12':
     optional: true
+
+  '@fontsource-variable/lora@5.2.8': {}
+
+  '@fontsource-variable/raleway@5.2.8': {}
 
   '@fontsource/fusion-pixel-12px-monospaced-jp@5.2.5': {}
 
