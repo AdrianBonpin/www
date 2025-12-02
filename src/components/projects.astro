@@ -1,0 +1,32 @@
+---
+import { ArrowUpRightIcon } from "@lucide/astro"
+import { projects } from "../utils/projects"
+---
+
+<div
+    class='w-full overflow-x-scroll flex flex-row gap-10 max-w-7xl mx-auto px-4 py-10 snap-x snap-mandatory'
+>
+    {
+        projects.map((project, idx) => (
+            <div class='flex flex-col gap-2 group min-w-[calc(100dvw-2rem)] md:min-w-xl snap snap-center md:snap-start hover:-translate-y-2 transition-transform'>
+                <img
+                    src={project.img.src}
+                    alt={project.title}
+                    class='w-full h-auto aspect-video object-cover rounded-md'
+                />
+                <div class='w-full flex flex-row gap-2 justify-between'>
+                    <span class='flex-1 text-lg md:text-2xl font-semibold'>
+                        {project.title}
+                    </span>
+                    <a
+                        href={project.link}
+                        target='_blank'
+                        class='hover:opacity-60 transition-opacity'
+                    >
+                        <ArrowUpRightIcon class='w-8 h-8 bg-transparent px-2 aspect-square transition-colors group-hover:bg-primary group-hover:text-background rounded-md' />
+                    </a>
+                </div>
+            </div>
+        ))
+    }
+</div>

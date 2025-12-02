@@ -1,18 +1,19 @@
 ---
 import HeroRain from "../components/hero-rain.astro"
+import Projects from "../components/projects.astro"
 import Base from "../layouts/base.astro"
 ---
 
 <Base>
     <section
-        id='hero'
+        id='top'
         class='w-full min-h-dvh flex flex-col justify-center pt-14 select-none'
     >
-        <div
+        <h1
             class='w-full flex flex-row md:justify-end max-w-7xl mx-auto text-4xl py-10 px-4'
         >
             Building Dreams.<br />One Line at a Time.
-        </div>
+        </h1>
         <HeroRain />
         <div
             class='w-full max-w-7xl mx-auto text-xl px-4 text-center font-pixel py-4'
@@ -21,18 +22,51 @@ import Base from "../layouts/base.astro"
         </div>
     </section>
     <section
-        id='work'
-        class='w-full flex flex-col items-center min-h-[calc(100dvh-56px)]'
+        id='projects'
+        class='w-full flex flex-col items-center min-h-max'
     >
-        <div class='w-full max-w-7xl text-4xl px-4 mx-auto mt-10'>
+        <h2 class='w-full max-w-7xl text-2xl md:text-4xl px-4 mx-auto mt-10'>
             Elevate your online presence<br />with a <span
                 class='font-serif italic text-secondary'>custom</span
             > website.
-        </div>
-        <div
-            class='w-full text-3xl text-center py-4 my-8 italic font-serif border-y border-text'
+        </h2>
+        <p
+            class='w-full text-xl md:text-3xl text-center py-4 my-8 italic font-serif border-y border-text'
         >
             No Templates. No Duplicates. Just You.
-        </div>
+        </p>
+        <h3 class='w-full max-w-7xl text-2xl md:text-4xl px-4 mx-auto'>
+            Previous Projects
+        </h3>
+        <Projects />
+    </section>
+    <section
+        id='about'
+        class='w-full flex flex-col items-center min-h-max'
+    >
+        <h3 class='w-full max-w-7xl text-2xl md:text-4xl px-4 mx-auto mt-10'>
+            About Me
+        </h3>
+        <h4
+            class='w-full max-w-7xl text-xl md:text-2xl px-4 mx-auto mt-4 font-semibold text-justify'
+        >
+            Hello! I'm Adrian<span class='text-lg md:text-xl font-normal'
+                >, a web and software developer with a passion for creating
+                unique and innovative solutions.</span
+            >
+        </h4>
+        <p
+            class='w-full max-w-7xl px-4 text-lg mt-4 [&_span]:text-secondary [&_span]:italic [&_span]:underline text-justify'
+        >
+            I specialize in digital experiences with <span>Next.js</span> and <span
+                >Astro</span
+            >, and love making random things! I also work with the talented team
+            at <a
+                href='https://devgo.studio'
+                class='underline text-secondary'
+                target='_blank'
+                >DEVGO Studio</a
+            >, ready for new projects.
+        </p>
     </section>
 </Base>

@@ -1,5 +1,5 @@
 ---
-export const routes = ["projects", "about", "contact"]
+export const sections = ["projects", "about"]
 ---
 
 <nav
@@ -10,23 +10,32 @@ export const routes = ["projects", "about", "contact"]
     >
         <a
             title='Home'
-            href='/'
+            href='#top'
             class='font-pixel text-3xl font-bold hover:bg-text hover:text-background px-2 transition-colors'
             >ab</a
         >
         <div class='flex flex-row gap-8'>
             {
-                routes.map((route, idx) => (
+                sections.map((part, idx) => (
                     <a
-                        href={`/${route}`}
-                        title={`go to ${route}`}
-                        class={`font-pixel text-xl relative group ${Astro.url.pathname === `/${route}` ? "uppercase" : ""}`}
+                        href={`#${part}`}
+                        title={`go to ${part}`}
+                        class={`font-pixel text-xl relative group`}
                     >
-                        {route}
+                        {part}
                         <div class='absolute bottom-px left-0 right-0 group-hover:bg-primary bg-transparent h-px transition-colors' />
                     </a>
                 ))
             }
+            <a
+                href='mailto:adrianbonpin@gmail.com?subject=Website%20Enquiry&body=Hello%20Adrian,'
+                title='contact me'
+                class='font-pixel text-xl relative group'
+                >contact<div
+                    class='absolute bottom-px left-0 right-0 group-hover:bg-primary bg-transparent h-px transition-colors'
+                >
+                </div></a
+            >
         </div>
     </div>
 </nav>
