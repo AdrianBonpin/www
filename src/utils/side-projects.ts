@@ -23,7 +23,7 @@ export const sideProjects: SideProject[] = [
             src: rantemper,
             alt: "RanTemper"
         },
-        link: "https://github.com/AdrianBonpin/zmk-temper"
+        link: "https://github.com/AdrianBonpin/temper-case-and-config"
     },
     {
         title: "Tremor Watch",
