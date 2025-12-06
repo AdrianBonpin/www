@@ -1,0 +1,38 @@
+import type { ImageMetadata } from "astro"
+
+interface SideProject {
+    title: string
+    tags: string[]
+    desc: string
+    img: {
+        src: ImageMetadata
+        alt: string
+    }
+    link: string
+}
+
+import rantemper from "../assets/side-projects/rantemper.jpg"
+import ranquake from "../assets/side-projects/ranquake.png"
+
+export const sideProjects: SideProject[] = [
+    {
+        title: "RanTemper",
+        tags: ["ZMK", "3D Modeling", "Split Keyboard"],
+        desc: "A custom config and case for the temper by raeedcho.",
+        img: {
+            src: rantemper,
+            alt: "RanTemper"
+        },
+        link: "https://github.com/AdrianBonpin/zmk-temper"
+    },
+    {
+        title: "RanQuake",
+        tags: ["Discord.js", "Mapbox", "Groq AI"],
+        desc: "A Discord bot that notifies servers of the latest earthquakes from Phivolcs or USGS.",
+        img: {
+            src: ranquake,
+            alt: "RanQuake Discord Bot"
+        },
+        link: "https://github.com/AdrianBonpin/ranquake-discod-bot"
+    }
+]

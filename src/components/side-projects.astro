@@ -1,0 +1,38 @@
+---
+import { ArrowUpRightIcon } from "@lucide/astro"
+import { sideProjects } from "../utils/side-projects"
+---
+
+<div
+    class='w-full max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+>
+    {
+        sideProjects.map((project) => (
+            <a
+                href={project.link}
+                target='_blank'
+                class='group flex flex-col gap-3 p-4 rounded-xl border border-text/10 bg-text/5 hover:bg-text/10 hover:border-primary/50 hover:-translate-y-1 transition-all duration-300 cursor-pointer'
+            >
+                <div class='overflow-hidden rounded-lg'>
+                    <img
+                        src={project.img.src.src}
+                        alt={project.img.alt}
+                        class='w-full h-auto aspect-video object-cover object-center group-hover:scale-105 transition-transform duration-300'
+                    />
+                </div>
+                <div class='flex flex-row items-center justify-between gap-2'>
+                    <h4 class='text-xl font-semibold'>{project.title}</h4>
+                    <ArrowUpRightIcon class='w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity text-primary' />
+                </div>
+                <div class='flex flex-wrap gap-2'>
+                    {project.tags.map((tag) => (
+                        <span class='text-xs font-medium px-2 py-1 rounded-full bg-primary/20 text-primary'>
+                            {tag}
+                        </span>
+                    ))}
+                </div>
+                <p class='text-sm text-text/70'>{project.desc}</p>
+            </a>
+        ))
+    }
+</div>
