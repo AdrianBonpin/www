@@ -12,7 +12,7 @@ interface SideProject {
 }
 
 import rantemper from "../assets/side-projects/rantemper.jpg"
-import ranquake from "../assets/side-projects/ranquake.png"
+import tremorWatch from "../assets/side-projects/tremor-watch.png"
 
 export const sideProjects: SideProject[] = [
     {
@@ -26,13 +26,13 @@ export const sideProjects: SideProject[] = [
         link: "https://github.com/AdrianBonpin/zmk-temper"
     },
     {
-        title: "RanQuake",
+        title: "Tremor Watch",
         tags: ["Discord.js", "Mapbox", "Groq AI"],
         desc: "A Discord bot that notifies servers of the latest earthquakes from Phivolcs or USGS.",
         img: {
-            src: ranquake,
-            alt: "RanQuake Discord Bot"
+            src: tremorWatch,
+            alt: "Tremor Watch Discord Bot"
         },
-        link: "https://github.com/AdrianBonpin/ranquake-discod-bot"
+        link: "https://github.com/AdrianBonpin/tremor-watch"
     }
 ]
