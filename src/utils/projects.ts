@@ -9,6 +9,7 @@ export interface Project {
     framework: string
 }
 
+import grounds from '../assets/websites/groundsph.jpeg'
 import inksight from '../assets/websites/inksight.png'
 import rdmd from '../assets/websites/rdmdstudio.webp'
 import palms from '../assets/websites/palmsagency.webp'
@@ -19,6 +20,14 @@ import whatscookin from '../assets/websites/whatscookin.webp'
 import sync2va from '../assets/websites/sync2va.webp'
 
 export const projects: Project[] = [
+    {
+        title: "Grounds.ph",
+        tag: 'personal',
+        desc: 'Community Driver Cafe Catalog for the Philippines',
+        img: grounds,
+        link: 'https://ground.ph',
+        framework: 'NextJs'
+    },
     {
         title: "InkSight",
         tag: 'client',
