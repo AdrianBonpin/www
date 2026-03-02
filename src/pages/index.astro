@@ -17,6 +17,7 @@ import Base from "../layouts/base.astro"
         </h1>
         <HeroRain />
         <div
+            id='scroll-hint'
             class='w-full max-w-7xl mx-auto text-xl px-4 text-center font-pixel py-4'
         >
             v Scroll Down v
@@ -93,7 +94,7 @@ import Base from "../layouts/base.astro"
         'nav',
         '#top h1',
         '#ascii-container',
-        '#top > div:last-child',
+        '#scroll-hint',
     ]
 
     targets.forEach(selector => {
@@ -105,39 +106,48 @@ import Base from "../layouts/base.astro"
     })
 
     document.addEventListener('DOMContentLoaded', () => {
-        const tl = createTimeline({
-            defaults: {
-                ease: 'easeOutExpo',
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+        if (!prefersReducedMotion) {
+            const tl = createTimeline({
+                defaults: {
+                    ease: 'easeOutExpo',
+                    duration: 900,
+                },
+                onComplete: () => {
+                    const el = document.querySelector('#ascii-container') as HTMLElement | null
+                    if (el) el.style.willChange = 'auto'
+                }
+            })
+
+            tl.add('nav', {
+                opacity: [0, 1],
+                translateY: [-8, 0],
+                duration: 600,
+            })
+
+            tl.add('#top h1', {
+                opacity: [0, 1],
+                translateY: [20, 0],
                 duration: 900,
-            },
-            onComplete: () => {
-                const el = document.querySelector('#ascii-container') as HTMLElement | null
-                if (el) el.style.willChange = 'auto'
-            }
-        })
+            }, '-=200')
 
-        tl.add('nav', {
-            opacity: [0, 1],
-            translateY: [-8, 0],
-            duration: 600,
-        })
+            tl.add('#ascii-container', {
+                opacity: [0, 1],
+                translateY: [16, 0],
+                duration: 1000,
+            }, '-=400')
 
-        tl.add('#top h1', {
-            opacity: [0, 1],
-            translateY: [20, 0],
-            duration: 900,
-        }, '-=200')
-
-        tl.add('#ascii-container', {
-            opacity: [0, 1],
-            translateY: [16, 0],
-            duration: 1000,
-        }, '-=400')
-
-        tl.add('#top > div:last-child', {
-            opacity: [0, 1],
-            translateY: [8, 0],
-            duration: 700,
-        }, '-=200')
+            tl.add('#scroll-hint', {
+                opacity: [0, 1],
+                translateY: [8, 0],
+                duration: 700,
+            }, '-=200')
+        } else {
+            targets.forEach(selector => {
+                const el = document.querySelector(selector) as HTMLElement | null
+                if (el) el.style.opacity = '1'
+            })
+        }
     })
 </script>
