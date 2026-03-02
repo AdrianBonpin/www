@@ -110,6 +110,10 @@ import Base from "../layouts/base.astro"
                 ease: 'easeOutExpo',
                 duration: 900,
             },
+            onComplete: () => {
+                const el = document.querySelector('#ascii-container') as HTMLElement | null
+                if (el) el.style.willChange = 'auto'
+            }
         })
 
         tl.add('nav', {
