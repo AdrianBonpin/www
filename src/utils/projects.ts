@@ -23,9 +23,9 @@ export const projects: Project[] = [
     {
         title: "Grounds.ph",
         tag: 'personal',
-        desc: 'Community Driver Cafe Catalog for the Philippines',
+        desc: 'Community Driven Cafe Catalog for the Philippines',
         img: grounds,
-        link: 'https://ground.ph',
+        link: 'https://grounds.ph',
         framework: 'NextJs'
     },
     {
