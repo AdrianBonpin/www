@@ -97,6 +97,16 @@ import Base from "../layouts/base.astro"
         '#scroll-hint',
     ]
 
+    function showAll() {
+        targets.forEach(selector => {
+            const el = document.querySelector(selector) as HTMLElement | null
+            if (el) {
+                el.style.opacity = '1'
+                el.style.transform = ''
+            }
+        })
+    }
+
     targets.forEach(selector => {
         const el = document.querySelector(selector) as HTMLElement | null
         if (el) {
@@ -108,7 +118,12 @@ import Base from "../layouts/base.astro"
     document.addEventListener('DOMContentLoaded', () => {
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-        if (!prefersReducedMotion) {
+        if (prefersReducedMotion) {
+            showAll()
+            return
+        }
+
+        try {
             const tl = createTimeline({
                 defaults: {
                     ease: 'easeOutExpo',
@@ -116,7 +131,10 @@ import Base from "../layouts/base.astro"
                 },
                 onComplete: () => {
                     const el = document.querySelector('#ascii-container') as HTMLElement | null
-                    if (el) el.style.willChange = 'auto'
+                    if (el) {
+                        el.style.willChange = 'auto'
+                        el.style.transform = ''
+                    }
                 }
             })
 
@@ -143,11 +161,8 @@ import Base from "../layouts/base.astro"
                 translateY: [8, 0],
                 duration: 700,
             }, '-=200')
-        } else {
-            targets.forEach(selector => {
-                const el = document.querySelector(selector) as HTMLElement | null
-                if (el) el.style.opacity = '1'
-            })
+        } catch {
+            showAll()
         }
     })
 </script>
