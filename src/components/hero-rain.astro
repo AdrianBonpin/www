@@ -57,7 +57,7 @@
             this.particles = []
 
             this.init()
-            this.loop()
+            document.fonts.ready.then(() => { this.loop() })
         }
 
         private getCSSColor(variable: string, fallback: string): string {
