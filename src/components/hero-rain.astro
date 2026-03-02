@@ -38,6 +38,7 @@
         private particles: Particle[]
         private cols: number = 0
         private rows: number = 0
+        private grid: Float32Array = new Float32Array(0)
         private colors!: {
             dim: string
             mid: string
@@ -121,6 +122,12 @@
                 if (p.x > this.width) p.x = this.width - 20
                 if (p.y > this.height) p.y = this.height - 20
             })
+
+            // Reallocate grid only when dimensions change
+            const needed = this.cols * this.rows
+            if (this.grid.length !== needed) {
+                this.grid = new Float32Array(needed)
+            }
         }
 
         spawnParticles() {
@@ -337,7 +344,8 @@
         render() {
             this.ctx.clearRect(0, 0, this.width, this.height)
 
-            const grid = new Float32Array(this.cols * this.rows).fill(0)
+            this.grid.fill(0)
+            const grid = this.grid
 
             for (const p of this.particles) {
                 const c = Math.floor(p.x / CONFIG.charSize)
