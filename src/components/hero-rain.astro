@@ -23,8 +23,8 @@
         mouseRadius: 100,
         interactionRadius: 11,
         densityMap: ["·", "+", "=", "I", "T", "H", "O", "#", "@", "█"],
-        rainRate: 0.03,
-        stagnantThreshold: 2.0,
+        rainRate: 0.05,
+        stagnantThreshold: 2.5,
     }
 
     class AsciiLiquid {
@@ -388,6 +388,9 @@
         loop() {
             this.updatePhysics()
             this.render()
+            if (!this.container.dataset.canvasReady) {
+                this.container.dataset.canvasReady = 'true'
+            }
             requestAnimationFrame(() => this.loop())
         }
     }
