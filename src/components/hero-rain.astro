@@ -5,6 +5,8 @@
     <canvas id='ascii-canvas' style='background: transparent'></canvas>
 </div>
 <script>
+    import { getCSSColor, densityToColor, clampParticleCount } from '../lib/hero-rain-utils'
+
     interface Particle {
         x: number
         y: number
@@ -61,18 +63,11 @@
             document.fonts.ready.then(() => { this.loop() })
         }
 
-        private getCSSColor(variable: string, fallback: string): string {
-            const val = getComputedStyle(document.documentElement)
-                .getPropertyValue(variable)
-                .trim()
-            return val || fallback
-        }
-
         init() {
             this.colors = {
-                dim: this.getCSSColor('--accent', '#393053'),
-                mid: this.getCSSColor('--primary', '#635985'),
-                bright: this.getCSSColor('--text', '#F4F4F4'),
+                dim: getCSSColor('--accent', '#393053'),
+                mid: getCSSColor('--primary', '#635985'),
+                bright: getCSSColor('--text', '#F4F4F4'),
             }
             this.bindEvents()
             this.resize()
@@ -80,11 +75,7 @@
         }
 
         calculateParticleCount(): number {
-            const count = Math.floor(this.width * CONFIG.particleDensity)
-            return Math.max(
-                CONFIG.minParticles,
-                Math.min(CONFIG.maxParticles, count)
-            )
+            return clampParticleCount(this.width, CONFIG.particleDensity, CONFIG.minParticles, CONFIG.maxParticles)
         }
 
         resize() {
@@ -376,13 +367,7 @@
                     )
                     const char = CONFIG.densityMap[charIdx]
 
-                    if (val < 1) {
-                        this.ctx.fillStyle = this.colors.dim
-                    } else if (val < 3) {
-                        this.ctx.fillStyle = this.colors.mid
-                    } else {
-                        this.ctx.fillStyle = this.colors.bright
-                    }
+                    this.ctx.fillStyle = densityToColor(val, this.colors)
 
                     this.ctx.fillText(
                         char,
