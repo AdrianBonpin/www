@@ -1,12 +1,21 @@
 @import "tailwindcss";
 
-@theme {
+:root {
+    --primary: #635985;
+    --secondary: #443C68;
+    --background: #18122B;
+    --accent: #393053
+    --text: #F4F4F4;
+}
+
+@theme inline {
     --default-transition-duration: 300ms;
     --font-pixel: "Fusion Pixel 12px Monospaced JP", sans-serif;
     --font-sans: "Raleway Variable", sans-serif;
     --font-serif: "Lora Variable", serif;
-    --color-background: #f4f6ff;
-    --color-text: #10375c;
-    --color-primary: #eb8317;
-    --color-secondary: #f3c623;
+    --color-background: var(--background);
+    --color-text: var(--text);
+    --color-primary: var(--primary);
+    --color-secondary: var(--secondary);
+    --color-accent: var(--accent);
 }
