@@ -16,13 +16,13 @@
         particleDensity: 0.47, // Particles per pixel width (~900 for 1920px, ~180 for 375px)
         minParticles: 100, // Minimum particle count for very small screens
         maxParticles: 1200, // Maximum particle count for very large screens
-        charSize: 20,
+        charSize: 16,
         friction: 0.92,
         gravityScale: 0.5,
         mouseForce: 1.5,
         mouseRadius: 100,
-        interactionRadius: 14,
-        densityMap: [" ", "·", ":", "o", "x", "%", "#", "@"],
+        interactionRadius: 11,
+        densityMap: ["·", "+", "=", "I", "T", "H", "O", "#", "@", "█"],
         rainRate: 0.03,
         stagnantThreshold: 2.0,
     }
@@ -342,40 +342,45 @@
             for (const p of this.particles) {
                 const c = Math.floor(p.x / CONFIG.charSize)
                 const r = Math.floor(p.y / CONFIG.charSize)
-
                 if (c >= 0 && c < this.cols && r >= 0 && r < this.rows) {
                     const idx = r * this.cols + c
                     grid[idx] += 1
-                    if (c + 1 < this.cols) grid[idx + 1] += 0.5
-                    if (c - 1 >= 0) grid[idx - 1] += 0.5
-                    if (r + 1 < this.rows) grid[idx + this.cols] += 0.5
-                    if (r - 1 >= 0) grid[idx - this.cols] += 0.5
+                    if (c + 1 < this.cols) grid[idx + 1] += 0.4
+                    if (c - 1 >= 0)        grid[idx - 1] += 0.4
+                    if (r + 1 < this.rows) grid[idx + this.cols] += 0.4
+                    if (r - 1 >= 0)        grid[idx - this.cols] += 0.4
                 }
             }
 
-            this.ctx.fillStyle = this.colors.bright
-            this.ctx.font = `${CONFIG.charSize}px monospace`
+            this.ctx.font = `${CONFIG.charSize}px 'Fusion Pixel 12px Monospaced JP', monospace`
             this.ctx.textBaseline = "middle"
             this.ctx.textAlign = "center"
 
+            const mapLen = CONFIG.densityMap.length
+
             for (let r = 0; r < this.rows; r++) {
                 for (let c = 0; c < this.cols; c++) {
-                    const idx = r * this.cols + c
-                    const val = grid[idx]
+                    const val = grid[r * this.cols + c]
 
-                    if (val > 0.3) {
-                        let charIdx = Math.floor(val)
-                        if (charIdx >= CONFIG.densityMap.length)
-                            charIdx = CONFIG.densityMap.length - 1
+                    const charIdx = Math.min(
+                        Math.floor(val),
+                        mapLen - 1
+                    )
+                    const char = CONFIG.densityMap[charIdx]
 
-                        if (charIdx > 0) {
-                            this.ctx.fillText(
-                                CONFIG.densityMap[charIdx],
-                                c * CONFIG.charSize + CONFIG.charSize / 2,
-                                r * CONFIG.charSize + CONFIG.charSize / 2
-                            )
-                        }
+                    if (val < 1) {
+                        this.ctx.fillStyle = this.colors.dim
+                    } else if (val < 3) {
+                        this.ctx.fillStyle = this.colors.mid
+                    } else {
+                        this.ctx.fillStyle = this.colors.bright
                     }
+
+                    this.ctx.fillText(
+                        char,
+                        c * CONFIG.charSize + CONFIG.charSize / 2,
+                        r * CONFIG.charSize + CONFIG.charSize / 2
+                    )
                 }
             }
         }
