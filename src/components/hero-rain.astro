@@ -2,7 +2,7 @@
     id='ascii-container'
     class='w-full flex-1'
 >
-    <canvas id='ascii-canvas'></canvas>
+    <canvas id='ascii-canvas' style='background: transparent'></canvas>
 </div>
 <script>
     interface Particle {
@@ -23,7 +23,6 @@
         mouseRadius: 100,
         interactionRadius: 14,
         densityMap: [" ", "·", ":", "o", "x", "%", "#", "@"],
-        textColor: "#eb8317",
         rainRate: 0.03,
         stagnantThreshold: 2.0,
     }
@@ -39,6 +38,11 @@
         private particles: Particle[]
         private cols: number = 0
         private rows: number = 0
+        private colors!: {
+            dim: string
+            mid: string
+            bright: string
+        }
 
         constructor(containerId: string, canvasId: string) {
             this.container = document.getElementById(containerId) as HTMLElement
@@ -56,7 +60,19 @@
             this.loop()
         }
 
+        private getCSSColor(variable: string, fallback: string): string {
+            const val = getComputedStyle(document.documentElement)
+                .getPropertyValue(variable)
+                .trim()
+            return val || fallback
+        }
+
         init() {
+            this.colors = {
+                dim: this.getCSSColor('--accent', '#393053'),
+                mid: this.getCSSColor('--primary', '#635985'),
+                bright: this.getCSSColor('--text', '#F4F4F4'),
+            }
             this.bindEvents()
             this.resize()
             this.spawnParticles()
@@ -196,7 +212,7 @@
                 () => []
             )
 
-            for (let p of this.particles) {
+            for (const p of this.particles) {
                 const c = Math.floor(p.x / cellSize)
                 const r = Math.floor(p.y / cellSize)
                 if (c >= 0 && c < gridCols && r >= 0 && r < gridRows) {
@@ -204,7 +220,7 @@
                 }
             }
 
-            for (let p of this.particles) {
+            for (const p of this.particles) {
                 const c = Math.floor(p.x / cellSize)
                 const r = Math.floor(p.y / cellSize)
 
@@ -220,7 +236,7 @@
                             nr < gridRows
                         ) {
                             const cell = grid[nr * gridCols + nc]
-                            for (let other of cell) {
+                            for (const other of cell) {
                                 if (p === other) continue
 
                                 const dx = p.x - other.x
@@ -247,7 +263,7 @@
             const cx = this.width / 2
             const cy = this.height / 2
 
-            for (let p of this.particles) {
+            for (const p of this.particles) {
                 // Apply Gravity
                 p.vx += this.gravity.x * CONFIG.gravityScale
                 p.vy += this.gravity.y * CONFIG.gravityScale
@@ -319,12 +335,11 @@
         }
 
         render() {
-            this.ctx.fillStyle = "#f4f6ff"
-            this.ctx.fillRect(0, 0, this.width, this.height)
+            this.ctx.clearRect(0, 0, this.width, this.height)
 
             const grid = new Float32Array(this.cols * this.rows).fill(0)
 
-            for (let p of this.particles) {
+            for (const p of this.particles) {
                 const c = Math.floor(p.x / CONFIG.charSize)
                 const r = Math.floor(p.y / CONFIG.charSize)
 
@@ -338,7 +353,7 @@
                 }
             }
 
-            this.ctx.fillStyle = CONFIG.textColor
+            this.ctx.fillStyle = this.colors.bright
             this.ctx.font = `${CONFIG.charSize}px monospace`
             this.ctx.textBaseline = "middle"
             this.ctx.textAlign = "center"
