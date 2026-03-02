@@ -19,3 +19,7 @@
     --color-secondary: var(--secondary);
     --color-accent: var(--accent);
 }
+
+#ascii-container {
+    will-change: opacity, transform;
+}

@@ -85,3 +85,55 @@ import Base from "../layouts/base.astro"
         <SideProjects />
     </section>
 </Base>
+
+<script>
+    import { createTimeline } from 'animejs'
+
+    const targets = [
+        'nav',
+        '#top h1',
+        '#ascii-container',
+        '#top > div:last-child',
+    ]
+
+    targets.forEach(selector => {
+        const el = document.querySelector(selector) as HTMLElement | null
+        if (el) {
+            el.style.opacity = '0'
+            el.style.transform = 'translateY(12px)'
+        }
+    })
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const tl = createTimeline({
+            defaults: {
+                ease: 'easeOutExpo',
+                duration: 900,
+            },
+        })
+
+        tl.add('nav', {
+            opacity: [0, 1],
+            translateY: [-8, 0],
+            duration: 600,
+        })
+
+        tl.add('#top h1', {
+            opacity: [0, 1],
+            translateY: [20, 0],
+            duration: 900,
+        }, '-=200')
+
+        tl.add('#ascii-container', {
+            opacity: [0, 1],
+            translateY: [16, 0],
+            duration: 1000,
+        }, '-=400')
+
+        tl.add('#top > div:last-child', {
+            opacity: [0, 1],
+            translateY: [8, 0],
+            duration: 700,
+        }, '-=200')
+    })
+</script>
