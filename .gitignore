@@ -3,6 +3,9 @@ dist/
 # generated types
 .astro/
 
+# generated OG image (built at build time)
+public/og-image.png
+
 # dependencies
 node_modules/
 
