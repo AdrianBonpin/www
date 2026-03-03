@@ -31,7 +31,9 @@
         mouseForce: 1.5,
         mouseRadius: 100,
         interactionRadius: 11,
-        densityMap: ["·", "+", "=", "I", "T", "H", "O", "#", "@", "█"],
+        // Characters to randomly choose from (filler characters only, excludes . ' etc)
+        charPool: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:\",<>?/~`".split(""),
+        charUpdateInterval: 8, // Update characters every N frames (higher = slower)
         rainRate: 0.05,
         stagnantThreshold: 2.5,
     }
@@ -48,6 +50,8 @@
         private cols: number = 0
         private rows: number = 0
         private grid: Float32Array = new Float32Array(0)
+        private charGrid: string[] = []
+        private frameCount: number = 0
         private colors!: {
             dim: string
             mid: string
@@ -71,10 +75,15 @@
         }
 
         init() {
+            // Convert hex colors to rgba for alpha control
+            const dimColor = getCSSColor('--accent', '#393053')
+            const midColor = getCSSColor('--primary', '#635985')
+            const brightColor = getCSSColor('--text', '#F4F4F4')
+
             this.colors = {
-                dim: getCSSColor('--accent', '#393053'),
-                mid: getCSSColor('--primary', '#635985'),
-                bright: getCSSColor('--text', '#F4F4F4'),
+                dim: this.hexToRgba(dimColor, 0.15),   // Subtle but visible
+                mid: this.hexToRgba(midColor, 0.5),    // Moderate visibility
+                bright: brightColor,                    // Fully opaque
             }
             this.bindEvents()
             this.resize()
@@ -83,6 +92,23 @@
 
         calculateParticleCount(): number {
             return clampParticleCount(this.width, CONFIG.particleDensity, CONFIG.minParticles, CONFIG.maxParticles)
+        }
+
+        // Convert hex color to rgba string with alpha
+        hexToRgba(hex: string, alpha: number): string {
+            // Remove # if present
+            hex = hex.replace('#', '')
+            
+            // Handle 3-digit hex
+            if (hex.length === 3) {
+                hex = hex.split('').map(c => c + c).join('')
+            }
+            
+            const r = parseInt(hex.substring(0, 2), 16)
+            const g = parseInt(hex.substring(2, 4), 16)
+            const b = parseInt(hex.substring(4, 6), 16)
+            
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`
         }
 
         resize() {
@@ -125,6 +151,10 @@
             const needed = this.cols * this.rows
             if (this.grid.length !== needed) {
                 this.grid = new Float32Array(needed)
+                // Initialize charGrid with random characters
+                this.charGrid = Array.from({ length: needed }, () =>
+                    CONFIG.charPool[Math.floor(Math.random() * CONFIG.charPool.length)]
+                )
             }
         }
 
@@ -342,6 +372,10 @@
         render() {
             this.ctx.clearRect(0, 0, this.width, this.height)
 
+            // Track frames for character update timing
+            this.frameCount++
+            const shouldUpdateChars = this.frameCount % CONFIG.charUpdateInterval === 0
+
             this.grid.fill(0)
             const grid = this.grid
 
@@ -362,17 +396,16 @@
             this.ctx.textBaseline = "middle"
             this.ctx.textAlign = "center"
 
-            const mapLen = CONFIG.densityMap.length
-
             for (let r = 0; r < this.rows; r++) {
                 for (let c = 0; c < this.cols; c++) {
-                    const val = grid[r * this.cols + c]
+                    const idx = r * this.cols + c
+                    const val = grid[idx]
 
-                    const charIdx = Math.min(
-                        Math.floor(val),
-                        mapLen - 1
-                    )
-                    const char = CONFIG.densityMap[charIdx]
+                    // Update character only every N frames for slower randomization
+                    if (shouldUpdateChars) {
+                        this.charGrid[idx] = CONFIG.charPool[Math.floor(Math.random() * CONFIG.charPool.length)]
+                    }
+                    const char = this.charGrid[idx]
 
                     this.ctx.fillStyle = densityToColor(val, this.colors)
 
