@@ -9,6 +9,7 @@ export interface Project {
     framework: string
 }
 
+import devgo from '../assets/websites/devgo.png'
 import grounds from '../assets/websites/groundsph.jpeg'
 import inksight from '../assets/websites/inksight.png'
 import rdmd from '../assets/websites/rdmdstudio.webp'
@@ -21,7 +22,15 @@ import sync2va from '../assets/websites/sync2va.webp'
 
 export const projects: Project[] = [
     {
-        title: "Grounds.ph",
+        title: "DEVGO Website",
+        tag: 'personal',
+        desc: 'Website for our software development agency, DEVGO',
+        img: devgo,
+        link: 'https://devgo.studio',
+        framework: 'NextJs'
+    },
+    {
+        title: "GroundsPH",
         tag: 'personal',
         desc: 'Community Driven Cafe Catalog for the Philippines',
         img: grounds,
