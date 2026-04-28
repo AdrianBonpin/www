@@ -19,8 +19,17 @@ import dermadoc from '../assets/websites/dermadoc.webp'
 import klbhs from '../assets/websites/klbhs.webp'
 import whatscookin from '../assets/websites/whatscookin.webp'
 import sync2va from '../assets/websites/sync2va.webp'
+import deckyvault from '../assets/websites/deckyvault.png'
 
 export const projects: Project[] = [
+    {
+        title: "DeckyVault",
+        tag: 'personal',
+        desc: 'A fast, modern browser for finding game benchmarks, settings, and guides for Steam Deck OLED & LCD',
+        img: deckyvault,
+        link: 'https://deckyvault.xyz',
+        framework: 'NextJs'
+    },
     {
         title: "DEVGO Website",
         tag: 'personal',
