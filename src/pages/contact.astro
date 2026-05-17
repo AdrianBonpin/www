@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/base.astro"
 import ContactForm from "../components/contact-form.astro"
+import ContactAlternatives from "../components/contact-alternatives.astro"
 import { siteConfig } from "../data/site-config"
 import {
   MailIcon,
@@ -156,27 +157,28 @@ const infoCards = [
       </div>
     </section>
 
-    {/* ─── FORM ─── */}
+    {/* ─── FORM / ALTERNATIVES ─── */}
     <section class="w-full py-12 md:py-16 border-t border-text/10">
       <div class="w-full max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-10">
         {/* Left: heading */}
         <div class="lg:w-72 shrink-0 space-y-4 form-heading" style="opacity: 0;">
           <p class="text-xs md:text-sm font-pixel text-primary tracking-widest uppercase">
-            Send a Message
+            {siteConfig.contactFormEnabled ? "Send a Message" : "Get in Touch"}
           </p>
           <h2 class="text-3xl md:text-4xl font-bold">
-            Drop me a line
+            {siteConfig.contactFormEnabled ? "Drop me a line" : "Reach out directly"}
           </h2>
           <p class="text-text/70 text-sm leading-relaxed">
-            Fill in the form and I'll get back to you as soon as possible. I'm
-            currently available for freelance work and open to new
-            opportunities.
+            {siteConfig.contactFormEnabled
+              ? "Fill in the form and I'll get back to you as soon as possible. I'm currently available for freelance work and open to new opportunities."
+              : "I'm currently available for freelance work and open to new opportunities. Choose any channel below — I typically respond within 24 hours."
+            }
           </p>
         </div>
 
-        {/* Right: form */}
+        {/* Right: form or alternatives */}
         <div class="flex-1 max-w-2xl form-body" style="opacity: 0;">
-          <ContactForm />
+          {siteConfig.contactFormEnabled ? <ContactForm /> : <ContactAlternatives />}
         </div>
       </div>
     </section>
