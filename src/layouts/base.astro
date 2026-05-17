@@ -136,11 +136,22 @@ const canonicalURL = new URL(
                 "@context": "https://schema.org",
                 "@type": "Person",
                 name: "Adrian Bonpin",
-                jobTitle: "Full Stack Developer & Designer",
+                jobTitle: "Full Stack Developer & Creative Technologist",
                 description: description,
                 url: url,
                 image: new URL(image, Astro.site || "https://adrianbonpin.com"),
-                sameAs: [],
+                sameAs: [
+                  "https://github.com/adrianbonpin",
+                  "https://linkedin.com/in/adrianbonpin",
+                ],
+                knowsAbout: [
+                  "Web Development",
+                  "Next.js",
+                  "Astro",
+                  "TypeScript",
+                  "Tailwind CSS",
+                  "React",
+                ],
             })}
         />
 
