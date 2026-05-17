@@ -1,0 +1,56 @@
+---
+// src/pages/resume.astro
+import Base from "../layouts/base.astro"
+import SectionHeading from "../components/section-heading.astro"
+import ResumeDownload from "../components/resume-download.astro"
+import ExperienceTimeline from "../components/experience-timeline.astro"
+import SkillsCompact from "../components/skills-compact.astro"
+import { experiences } from "../data/experience"
+import { education } from "../data/education"
+import { siteConfig } from "../data/site-config"
+---
+
+<Base
+  title={`Resume — ${siteConfig.name}`}
+  description="Adrian Bonpin's resume — full-stack developer skills, work experience, education. Downloadable PDF."
+>
+  <main class="pt-20 pb-10 space-y-12">
+    <section>
+      <SectionHeading as="h1" title="Resume" subtitle="Download or view inline" />
+      <div class="mt-6">
+        <ResumeDownload />
+      </div>
+    </section>
+
+    <section>
+      <SectionHeading title="Experience" />
+      <div class="mt-6">
+        <ExperienceTimeline experiences={experiences} compact={true} />
+      </div>
+    </section>
+
+    <section>
+      <SectionHeading title="Skills" />
+      <div class="mt-6">
+        <SkillsCompact />
+      </div>
+    </section>
+
+    {education.length > 0 && (
+      <section>
+        <SectionHeading title="Education" />
+        <div class="w-full max-w-7xl mx-auto px-4 mt-6 space-y-3">
+          {education.map((edu) => (
+            <div class="flex flex-row justify-between items-baseline py-2 border-b border-text/10">
+              <div>
+                <span class="font-semibold">{edu.credential}</span>
+                <span class="text-text/70"> — {edu.institution}</span>
+              </div>
+              <span class="text-sm text-text/50 font-pixel">{edu.year}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+  </main>
+</Base>
