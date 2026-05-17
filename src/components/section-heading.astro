@@ -1,0 +1,19 @@
+---
+// src/components/section-heading.astro
+export interface Props {
+  as?: "h1" | "h2" | "h3"
+  title: string
+  subtitle?: string
+  class?: string
+}
+
+const { as = "h2", title, subtitle, class: extraClass } = Astro.props
+const Tag = as as keyof HTMLElementTagNameMap
+---
+
+<div class={`w-full max-w-7xl mx-auto px-4 ${extraClass ?? ""}`}>
+  <Tag class="text-2xl md:text-4xl font-bold">{title}</Tag>
+  {subtitle && (
+    <p class="mt-2 text-text/70 italic">{subtitle}</p>
+  )}
+</div>
