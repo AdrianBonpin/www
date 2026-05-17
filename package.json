@@ -10,6 +10,7 @@
         "generate-og": "bun run scripts/generate-og.ts"
     },
     "dependencies": {
+        "@astrojs/check": "^0.9.9",
         "@fontsource-variable/lora": "^5.2.8",
         "@fontsource-variable/raleway": "^5.2.8",
         "@fontsource/fusion-pixel-12px-monospaced-jp": "^5.2.5",
@@ -17,7 +18,9 @@
         "@tailwindcss/vite": "^4.1.17",
         "animejs": "^4.2.2",
         "astro": "6.1.6",
-        "tailwindcss": "^4.1.17"
+        "resend": "^6.12.3",
+        "tailwindcss": "^4.1.17",
+        "typescript": "^6.0.3"
     },
     "devDependencies": {
         "@resvg/resvg-js": "^2.6.2",
