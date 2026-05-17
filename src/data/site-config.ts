@@ -17,4 +17,5 @@ export const siteConfig: SiteConfig = {
     { label: "resume", href: "/resume" },
     { label: "contact", href: "/contact" },
   ],
+  contactFormEnabled: false,
 }

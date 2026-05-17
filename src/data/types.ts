@@ -41,6 +41,7 @@ export interface SiteConfig {
     linkedin: string
   }
   navItems: NavItem[]
+  contactFormEnabled: boolean
 }
 
 export interface NavItem {
