@@ -1,0 +1,35 @@
+---
+// src/components/skills-grid.astro
+import { skillCategories } from "../data/skills"
+
+function levelLabel(l: number): string {
+  const labels = ["", "Familiar", "Comfortable", "Proficient", "Advanced", "Expert"]
+  return labels[l] ?? ""
+}
+---
+
+<div class="w-full max-w-7xl mx-auto px-4">
+  {
+    skillCategories.map((cat) => (
+      <div class="mb-8">
+        <h3 class="text-lg md:text-xl font-semibold mb-4 text-primary">{cat.category}</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          {cat.items.map((skill) => (
+            <div class="flex flex-col gap-1 p-3 rounded-lg border border-text/10 bg-text/5">
+              <div class="flex flex-row justify-between items-center">
+                <span class="font-medium">{skill.name}</span>
+                <span class="text-xs text-text/50 font-pixel">{levelLabel(skill.level)}</span>
+              </div>
+              <div class="w-full h-1.5 rounded-full bg-accent/50 overflow-hidden">
+                <div
+                  class="h-full rounded-full bg-primary transition-all"
+                  style={`width: ${(skill.level / 5) * 100}%`}
+                ></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    ))
+  }
+</div>
