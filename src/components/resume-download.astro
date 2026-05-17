@@ -1,0 +1,15 @@
+---
+// src/components/resume-download.astro
+import { DownloadIcon } from "@lucide/astro"
+---
+
+<div class="w-full max-w-7xl mx-auto px-4">
+  <a
+    href="/resume.pdf"
+    download
+    class="inline-flex flex-row items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-secondary transition-colors"
+  >
+    <DownloadIcon class="w-5 h-5" />
+    Download Resume (PDF)
+  </a>
+</div>
