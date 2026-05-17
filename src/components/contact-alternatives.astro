@@ -1,0 +1,77 @@
+---
+// src/components/contact-alternatives.astro
+// Shown when contactFormEnabled is false — direct contact links instead of the form
+import { siteConfig } from "../data/site-config"
+import {
+  MailIcon,
+  GithubIcon,
+  LinkedinIcon,
+  SendIcon,
+  ClockIcon,
+} from "@lucide/astro"
+---
+
+<div class="flex-1 max-w-2xl">
+  <div class="rounded-2xl border border-text/10 bg-text/[0.03] p-8 md:p-10 space-y-6">
+    {/* Status notice */}
+    <div class="flex items-start gap-3 p-4 rounded-xl bg-accent/20 border border-primary/20">
+      <ClockIcon class="w-5 h-5 text-primary shrink-0 mt-0.5" />
+      <div>
+        <p class="font-semibold text-sm mb-1">Contact form coming soon</p>
+        <p class="text-xs text-text/60 leading-relaxed">
+          The contact form is temporarily unavailable. In the meantime, reach me directly through any of the channels below — I typically respond within 24 hours.
+        </p>
+      </div>
+    </div>
+
+    {/* Direct email CTA */}
+    <a
+      href={`mailto:${siteConfig.email}`}
+      class="flex items-center gap-4 p-5 rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/15 hover:border-primary/60 transition-all duration-300 group hover:-translate-y-0.5"
+    >
+      <div class="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 transition-colors shrink-0">
+        <SendIcon class="w-6 h-6 text-primary" />
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="font-semibold group-hover:text-primary transition-colors">Send an Email</p>
+        <p class="text-sm text-text/50 font-pixel truncate">{siteConfig.email}</p>
+        <p class="text-xs text-text/40 mt-1">Best for project inquiries and opportunities</p>
+      </div>
+      <SendIcon class="w-5 h-5 text-text/30 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300 shrink-0" />
+    </a>
+
+    {/* GitHub */}
+    <a
+      href={siteConfig.socials.github}
+      target="_blank"
+      class="flex items-center gap-4 p-5 rounded-xl border border-text/10 hover:border-primary/30 hover:bg-accent/10 transition-all duration-300 group hover:-translate-y-0.5"
+    >
+      <div class="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 transition-colors shrink-0">
+        <GithubIcon class="w-6 h-6 text-primary" />
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="font-semibold group-hover:text-primary transition-colors">GitHub</p>
+        <p class="text-sm text-text/50 font-pixel">@adrianbonpin</p>
+        <p class="text-xs text-text/40 mt-1">Open source contributions and projects</p>
+      </div>
+      <GithubIcon class="w-5 h-5 text-text/30 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300 shrink-0" />
+    </a>
+
+    {/* LinkedIn */}
+    <a
+      href={siteConfig.socials.linkedin}
+      target="_blank"
+      class="flex items-center gap-4 p-5 rounded-xl border border-text/10 hover:border-primary/30 hover:bg-accent/10 transition-all duration-300 group hover:-translate-y-0.5"
+    >
+      <div class="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 transition-colors shrink-0">
+        <LinkedinIcon class="w-6 h-6 text-primary" />
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="font-semibold group-hover:text-primary transition-colors">LinkedIn</p>
+        <p class="text-sm text-text/50 font-pixel">Adrian Bonpin</p>
+        <p class="text-xs text-text/40 mt-1">Professional network and opportunities</p>
+      </div>
+      <LinkedinIcon class="w-5 h-5 text-text/30 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300 shrink-0" />
+    </a>
+  </div>
+</div>
