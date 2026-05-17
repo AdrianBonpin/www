@@ -1,32 +1,159 @@
 ---
-// src/components/navbar.astro
 import { siteConfig } from "../data/site-config"
+
+const { pathname } = Astro.url
+
+function isActive(href: string) {
+  if (href === "/") return pathname === "/"
+  return pathname.startsWith(href)
+}
 ---
 
 <nav
-    class='fixed top-0 z-10 flex justify-center px-4 py-2 w-full bg-background'
+  class="fixed top-0 z-100 flex justify-center px-4 py-2 w-full bg-background/10 backdrop-blur-sm"
+  aria-label="Main"
 >
-    <div
-        class='w-full flex flex-row gap-2 justify-between items-center max-w-7xl'
+  <div class="w-full flex flex-row gap-2 justify-between items-center max-w-7xl">
+    {/* Logo */}
+    <a
+      title="Home"
+      href="/"
+      class="font-pixel text-3xl font-bold hover:bg-text hover:text-background px-2 transition-colors z-101"
     >
-        <a
-            title='Home'
-            href='/'
-            class='font-pixel text-3xl font-bold hover:bg-text hover:text-background px-2 transition-colors'
-            >ab</a
-        >
-        <div class='flex flex-row gap-8'>
-            {
-                siteConfig.navItems.map((item) => (
-                    <a
-                        href={item.href}
-                        class={`font-pixel text-xl relative group`}
-                    >
-                        {item.label}
-                        <div class='absolute bottom-px left-0 right-0 group-hover:bg-secondary bg-transparent h-px transition-colors' />
-                    </a>
-                ))
-            }
-        </div>
+      ab
+    </a>
+
+    {/* Desktop links */}
+    <div class="hidden md:flex flex-row gap-8">
+      {
+        siteConfig.navItems.map((item) => (
+          <a
+            href={item.href}
+            class:list={[
+              "font-pixel text-xl relative group",
+              isActive(item.href) && "text-secondary",
+            ]}
+            aria-current={isActive(item.href) ? "page" : undefined}
+          >
+            {item.label}
+            <span
+              class:list={[
+                "absolute bottom-px left-0 right-0 h-px transition-colors",
+                isActive(item.href) ? "bg-secondary" : "bg-transparent group-hover:bg-secondary",
+              ]}
+            />
+          </a>
+        ))
+      }
     </div>
+
+    {/* Mobile menu toggle */}
+    <button
+      id="nav-toggle"
+      class="md:hidden relative z-101 w-10 h-10 flex items-center justify-center focus-visible:outline-2 focus-visible:outline-text/50 rounded"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      aria-label="Toggle menu"
+    >
+      <svg
+        class="w-7 h-7"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="square"
+        aria-hidden="true"
+      >
+        <line x1="4" y1="7" x2="20" y2="7" class="bar-top" style="transition: transform 300ms ease; transform-origin: 12px 12px;" />
+        <line x1="4" y1="12" x2="20" y2="12" class="bar-mid" style="transition: opacity 300ms ease; transform-origin: 12px 12px;" />
+        <line x1="4" y1="17" x2="20" y2="17" class="bar-bottom" style="transition: transform 300ms ease; transform-origin: 12px 12px;" />
+      </svg>
+    </button>
+  </div>
+
+  {/* Mobile overlay */}
+  <div
+    id="mobile-menu"
+    class="fixed inset-x-0 top-0 pt-20 pb-8 px-4 bg-background/95 border-b border-text/10 transition-all duration-300 ease-out opacity-0 -translate-y-2 pointer-events-none md:hidden backdrop-blur-sm"
+    aria-hidden="true"
+  >
+    <div class="flex flex-col gap-1">
+      {
+        siteConfig.navItems.map((item) => (
+          <a
+            href={item.href}
+            class:list={[
+              "font-pixel text-2xl px-4 py-3 rounded transition-colors hover:bg-text/10",
+              isActive(item.href) && "text-secondary bg-text/5",
+            ]}
+            aria-current={isActive(item.href) ? "page" : undefined}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </div>
+  </div>
 </nav>
+
+<script>
+  (function () {
+    const toggle = document.getElementById("nav-toggle")
+    const menu = document.getElementById("mobile-menu")
+    if (!toggle || !menu) return
+
+    const topBar = toggle.querySelector(".bar-top")
+    const midBar = toggle.querySelector(".bar-mid")
+    const botBar = toggle.querySelector(".bar-bottom")
+
+    function open() {
+      menu.classList.remove("opacity-0", "-translate-y-2", "pointer-events-none")
+      menu.classList.add("opacity-100", "translate-y-0", "pointer-events-auto")
+      menu.setAttribute("aria-hidden", "false")
+      toggle.setAttribute("aria-expanded", "true")
+
+      if (topBar) { topBar.style.transform = "rotate(45deg) translateY(5px)" }
+      if (midBar) { midBar.style.opacity = "0" }
+      if (botBar) { botBar.style.transform = "rotate(-45deg) translateY(-5px)" }
+    }
+
+    function close() {
+      menu.classList.remove("opacity-100", "translate-y-0", "pointer-events-auto")
+      menu.classList.add("opacity-0", "-translate-y-2", "pointer-events-none")
+      menu.setAttribute("aria-hidden", "true")
+      toggle.setAttribute("aria-expanded", "false")
+
+      if (topBar) { topBar.style.transform = "" }
+      if (midBar) { midBar.style.opacity = "" }
+      if (botBar) { botBar.style.transform = "" }
+    }
+
+    let openState = false
+
+    toggle.addEventListener("click", () => {
+      openState = !openState
+      openState ? open() : close()
+    })
+
+    window.addEventListener("resize", () => {
+      if (window.innerWidth >= 768 && openState) {
+        openState = false
+        close()
+      }
+    })
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && openState) {
+        openState = false
+        close()
+      }
+    })
+
+    menu.addEventListener("click", (e) => {
+      if (e.target === menu) {
+        openState = false
+        close()
+      }
+    })
+  })()
+</script>
