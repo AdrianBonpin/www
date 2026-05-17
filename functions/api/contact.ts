@@ -34,6 +34,18 @@ function isValidEmail(email: string): boolean {
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context
+
+  // Feature flag — contact form is disabled
+  // Remove this block and uncomment the code below to re-enable
+  return new Response(JSON.stringify({
+    ok: false,
+    error: "Contact form is temporarily unavailable. Please email adrianbonpin@gmail.com directly.",
+  }), {
+    status: 503,
+    headers: { "Content-Type": "application/json" },
+  })
+
+  /* ── RE-ENABLE: remove the return above and uncomment this block ──
   const ip = request.headers.get("CF-Connecting-IP") || "unknown"
 
   // Rate limit
@@ -121,4 +133,5 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       headers: { "Content-Type": "application/json" },
     })
   }
+  ── END RE-ENABLE BLOCK ── */
 }
