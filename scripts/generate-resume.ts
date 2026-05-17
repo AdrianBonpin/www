@@ -1,36 +1,41 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
 /**
  * Resume PDF Generator
- * Generates a multi-page PDF resume at public/resume.pdf
+ * Generates a crisp, vector-based PDF resume at public/resume.pdf
  * Runs at build time before Astro build
  *
- * Pipeline: Data → satori (JSX→SVG) → resvg (SVG→PNG) → pdf-lib (PNG pages→PDF)
+ * Uses pdf-lib with standard PDF fonts for 100% vector output —
+ * no browser required, works in any CI/build environment (Cloudflare Pages, etc.)
+ *
+ * Design priorities:
+ *   - ATS-friendly: single column, standard fonts, clear headings, no tables/images
+ *   - Employer-ready: clean hierarchy, scannable bullets, adequate white space
+ *   - Print-friendly: dark text on white, proper margins
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs"
+import { writeFileSync, existsSync, mkdirSync } from "fs"
 import { resolve, dirname } from "path"
-import satori from "satori"
-import { Resvg } from "@resvg/resvg-js"
-import { PDFDocument } from "pdf-lib"
+import { PDFDocument, StandardFonts, rgb, PageSizes } from "pdf-lib"
 
 const __dirname = dirname(new URL(import.meta.url).pathname)
 
 // ─── Configuration ───
 const OUTPUT_PATH = resolve(__dirname, "../public/resume.pdf")
-const PAGE_WIDTH = 1275 // US Letter @ 150dpi
-const PAGE_HEIGHT = 1650
-const MARGIN = 60
+
+// US Letter in points (72 pts/inch)
+const PAGE_WIDTH = PageSizes.Letter[0]  // 612
+const PAGE_HEIGHT = PageSizes.Letter[1] // 792
+const MARGIN = 54                       // 0.75"
 const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2
 
-// Print-optimized colors
+// Colors (dark enough for print, light enough for subtle hierarchy)
 const C = {
-  text: "#1a1a2e",
-  textSecondary: "#4a4a6a",
-  accent: "#635985",
-  rule: "#e2e0eb",
-  bg: "#ffffff",
-  tagBg: "#f0edf7",
+  text: rgb(0.08, 0.08, 0.12),
+  textSecondary: rgb(0.28, 0.28, 0.34),
+  accent: rgb(0.35, 0.30, 0.48),
+  rule: rgb(0.78, 0.78, 0.84),
+  bullet: rgb(0.35, 0.30, 0.48),
 }
 
 // ─── Data ───
@@ -39,483 +44,385 @@ import { experiences } from "../src/data/experience"
 import { skillCategories } from "../src/data/skills"
 import { education } from "../src/data/education"
 
-interface ResumePage {
-  content: any // satori JSX element tree
+// Inline project text data (avoid importing Astro image assets in Node.js builds)
+const projects = [
+  {
+    title: "DeckyVault",
+    type: "personal" as const,
+    desc: "A fast, modern browser for finding game benchmarks, settings, and guides for Steam Deck OLED \u0026 LCD",
+    link: "https://deckyvault.xyz",
+    framework: "NextJs",
+    techTags: ["React", "Next.js", "Tailwind", "PostgreSQL", "Elysia"],
+    role: "Solo Developer",
+    year: 2026,
+  },
+  {
+    title: "GroundsPH",
+    type: "personal" as const,
+    desc: "Community Driven Cafe Catalog for the Philippines",
+    link: "https://grounds.ph",
+    framework: "NextJs",
+    techTags: ["React", "Next.js", "Tailwind", "Mapbox"],
+    role: "Solo Developer",
+    year: 2024,
+  },
+  {
+    title: "InkSight",
+    type: "client" as const,
+    desc: "Tattoo Suite for RDMD Studio",
+    link: "https://inksight.rdmdstudio.com",
+    framework: "NextJs",
+    techTags: ["React", "Next.js", "Tailwind"],
+    role: "Solo Developer",
+    year: 2024,
+  },
+  {
+    title: "RDMD Studio",
+    type: "client" as const,
+    desc: "Tattoo Studio based in Cebu City",
+    link: "https://rdmdstudio.com",
+    framework: "Astro",
+    techTags: ["Astro", "Tailwind"],
+    role: "Solo Developer",
+    year: 2024,
+  },
+]
+
+// ─── Types ───
+interface LayoutContext {
+  page: any
+  fontRegular: any
+  fontBold: any
+  fontItalic: any
+  fontMono: any
+  y: number
+  x: number
 }
 
-function buildPages(): ResumePage[] {
-  const pages: ResumePage[] = []
+// ─── Helpers ───
+function wrapText(text: string, maxWidth: number, font: any, size: number): string[] {
+  const words = text.split(" ")
+  const lines: string[] = []
+  let current = ""
+  for (const word of words) {
+    const test = current ? current + " " + word : word
+    const w = font.widthOfTextAtSize(test, size)
+    if (w > maxWidth && current) {
+      lines.push(current)
+      current = word
+    } else {
+      current = test
+    }
+  }
+  if (current) lines.push(current)
+  return lines
+}
 
-  // ── Header section ──
-  const headerSection = {
-    type: "div",
-    props: {
-      style: {
-        display: "flex",
-        flexDirection: "column",
-        paddingBottom: "24px",
-        borderBottomWidth: "2px",
-        borderBottomColor: C.accent,
-        marginBottom: "24px",
-      },
-      children: [
-        {
-          type: "h1",
-          props: {
-            style: {
-              fontFamily: "Raleway",
-              fontWeight: 700,
-              fontSize: 40,
-              color: C.text,
-              margin: 0,
-              marginBottom: "4px",
-            },
-            children: siteConfig.name,
-          },
-        },
-        {
-          type: "p",
-          props: {
-            style: {
-              fontFamily: "Raleway",
-              fontWeight: 400,
-              fontSize: 20,
-              color: C.accent,
-              margin: 0,
-              marginBottom: "12px",
-            },
-            children: siteConfig.title,
-          },
-        },
-        {
-          type: "div",
-          props: {
-            style: {
-              display: "flex",
-              flexDirection: "row",
-              gap: "20px",
-              fontFamily: "Fusion Pixel",
-              fontSize: 13,
-              color: C.textSecondary,
-            },
-            children: [
-              { type: "span", props: { children: `✉ ${siteConfig.email}` } },
-              { type: "span", props: { children: `📍 ${siteConfig.location}` } },
-              { type: "span", props: { children: "🌐 adrianbonpin.com" } },
-              { type: "span", props: { children: "💻 github.com/adrianbonpin" } },
-            ],
-          },
-        },
-      ],
-    },
+function formatDateRange(start: string, end?: string): string {
+  const fmt = (d: string) => {
+    const [y, m] = d.split("-")
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+    return `${months[parseInt(m)-1]} ${y}`
+  }
+  return `${fmt(start)} - ${end ? fmt(end) : "Present"}`
+}
+
+function drawLine(ctx: LayoutContext, x1: number, y1: number, x2: number, y2: number, color = C.rule, thickness = 0.5) {
+  ctx.page.drawLine({ start: { x: x1, y: y1 }, end: { x: x2, y: y2 }, thickness, color })
+}
+
+function drawText(ctx: LayoutContext, text: string, opts: {
+  font?: any, size?: number, color?: any, x?: number, maxWidth?: number, lineHeight?: number
+} = {}) {
+  const font = opts.font || ctx.fontRegular
+  const size = opts.size || 10
+  const color = opts.color || C.text
+  const x = opts.x ?? ctx.x
+  const maxWidth = opts.maxWidth ?? CONTENT_WIDTH
+  const lineHeight = opts.lineHeight || size * 1.45
+
+  const lines = wrapText(text, maxWidth, font, size)
+  for (const line of lines) {
+    ctx.page.drawText(line, { x, y: ctx.y, size, font, color })
+    ctx.y -= lineHeight
+  }
+  return lines.length * lineHeight
+}
+
+function sectionHeader(ctx: LayoutContext, title: string) {
+  const size = 11
+  const lineHeight = size * 1.4
+  const paddingBottom = 6
+
+  ctx.y -= 6
+  ctx.page.drawText(title.toUpperCase(), {
+    x: ctx.x,
+    y: ctx.y,
+    size,
+    font: ctx.fontBold,
+    color: C.accent,
+  })
+
+  const lineY = ctx.y - paddingBottom
+  drawLine(ctx, ctx.x, lineY, ctx.x + CONTENT_WIDTH, lineY, C.rule, 0.8)
+  ctx.y -= lineHeight + paddingBottom + 2
+}
+
+// ─── Page Builder ───
+async function buildResume() {
+  const pdfDoc = await PDFDocument.create()
+
+  let page = pdfDoc.addPage([PAGE_WIDTH, PAGE_HEIGHT])
+  let ctx: LayoutContext = {
+    page,
+    fontRegular: await pdfDoc.embedFont(StandardFonts.Helvetica),
+    fontBold: await pdfDoc.embedFont(StandardFonts.HelveticaBold),
+    fontItalic: await pdfDoc.embedFont(StandardFonts.HelveticaOblique),
+    fontMono: await pdfDoc.embedFont(StandardFonts.Courier),
+    y: PAGE_HEIGHT - MARGIN,
+    x: MARGIN,
   }
 
-  // ── Summary section ──
-  const summarySection = {
-    type: "div",
-    props: {
-      style: {
-        marginBottom: "24px",
-        fontFamily: "Raleway",
-        fontSize: 15,
-        color: C.textSecondary,
-        lineHeight: 1.6,
-        fontStyle: "italic",
-      },
-      children:
-        "Full-stack developer with 2+ years of experience building custom web applications and websites. Specialized in Next.js and Astro with a focus on performance, accessibility, and clean architecture. Currently building at DEVGO Studio, delivering bespoke solutions for clients across industries.",
-    },
-  }
-
-  // ── Section heading helper ──
-  function sectionHeading(label: string) {
-    return {
-      type: "div",
-      props: {
-        style: {
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "baseline",
-          gap: "12px",
-          marginBottom: "16px",
-        },
-        children: [
-          {
-            type: "h2",
-            props: {
-              style: {
-                fontFamily: "Raleway",
-                fontWeight: 700,
-                fontSize: 22,
-                color: C.text,
-                margin: 0,
-              },
-              children: label,
-            },
-          },
-          {
-            type: "div",
-            props: {
-              style: {
-                flex: 1,
-                height: "1px",
-                backgroundColor: C.rule,
-              },
-            },
-          },
-        ],
-      },
+  function checkPage(minSpace = 120) {
+    if (ctx.y < MARGIN + minSpace) {
+      page = pdfDoc.addPage([PAGE_WIDTH, PAGE_HEIGHT])
+      ctx.page = page
+      ctx.y = PAGE_HEIGHT - MARGIN
     }
   }
 
-  // ── Experience section ──
-  const experienceItems = experiences.map((exp) => ({
-    type: "div",
-    props: {
-      style: {
-        display: "flex",
-        flexDirection: "column",
-        marginBottom: "20px",
-      },
-      children: [
-        {
-          type: "div",
-          props: {
-            style: {
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "baseline",
-              marginBottom: "4px",
-            },
-            children: [
-              {
-                type: "div",
-                props: {
-                  style: { display: "flex", flexDirection: "row", gap: "8px", alignItems: "baseline" },
-                  children: [
-                    {
-                      type: "span",
-                      props: {
-                        style: { fontFamily: "Raleway", fontWeight: 700, fontSize: 17, color: C.text },
-                        children: exp.role,
-                      },
-                    },
-                    {
-                      type: "span",
-                      props: {
-                        style: { fontFamily: "Raleway", fontWeight: 400, fontSize: 15, color: C.accent },
-                        children: `at ${exp.company}`,
-                      },
-                    },
-                  ],
-                },
-              },
-              {
-                type: "span",
-                props: {
-                  style: { fontFamily: "Fusion Pixel", fontSize: 12, color: C.textSecondary },
-                  children: `${exp.startDate} — ${exp.endDate ?? "Present"}`,
-                },
-              },
-            ],
-          },
-        },
-        ...exp.highlights.map((h) => ({
-          type: "div",
-          props: {
-            style: {
-              display: "flex",
-              flexDirection: "row",
-              gap: "8px",
-              marginBottom: "2px",
-              fontFamily: "Raleway",
-              fontSize: 14,
-              color: C.textSecondary,
-              lineHeight: 1.5,
-            },
-            children: [
-              { type: "span", props: { style: { color: C.accent }, children: "•" } },
-              { type: "span", props: { children: h } },
-            ],
-          },
-        })),
-      ],
-    },
-  }))
+  // ── HEADER ──
+  const nameSize = 24
+  const titleSize = 11
+  const contactSize = 9
 
-  const experienceSection = {
-    type: "div",
-    props: {
-      style: { display: "flex", flexDirection: "column", marginBottom: "24px" },
-      children: [sectionHeading("Experience"), ...experienceItems],
-    },
+  // Name
+  ctx.page.drawText(siteConfig.name, {
+    x: ctx.x,
+    y: ctx.y,
+    size: nameSize,
+    font: ctx.fontBold,
+    color: C.text,
+  })
+  ctx.y -= nameSize + 3
+
+  // Title
+  ctx.page.drawText(siteConfig.title, {
+    x: ctx.x,
+    y: ctx.y,
+    size: titleSize,
+    font: ctx.fontRegular,
+    color: C.accent,
+  })
+  ctx.y -= titleSize + 5
+
+  // Contact rows (clear, scannable, ATS-friendly)
+  const contactRow1 = `${siteConfig.email}  ·  ${siteConfig.location}  ·  adrianbonpin.com`
+  const contactRow2 = `github.com/adrianbonpin  ·  linkedin.com/in/adrianbonpin`
+  drawText(ctx, contactRow1, { size: contactSize, color: C.textSecondary, lineHeight: 11 })
+  drawText(ctx, contactRow2, { size: contactSize, color: C.textSecondary, lineHeight: 11 })
+  ctx.y -= 2
+
+  // Accent rule below header
+  drawLine(ctx, ctx.x, ctx.y, ctx.x + CONTENT_WIDTH, ctx.y, C.accent, 1.2)
+  ctx.y -= 14
+
+  // ── PROFESSIONAL SUMMARY ──
+  const summary =
+    "Full-stack developer with 3+ years of experience building custom web applications and websites. Specialized in Next.js, Astro, React, and TypeScript with a strong focus on performance, accessibility, and clean architecture. Proven track record of delivering 10+ client projects across diverse industries including creative agencies, e-commerce, and education. Passionate about modern tooling, developer experience, and shipping products that look great and feel effortless to use."
+
+  drawText(ctx, summary, { size: 10, color: C.textSecondary, lineHeight: 14, maxWidth: CONTENT_WIDTH })
+  ctx.y -= 8
+
+  // ── PROFESSIONAL EXPERIENCE ──
+  sectionHeader(ctx, "Professional Experience")
+  for (const exp of experiences) {
+    checkPage(70)
+
+    // Role + Company on left, date on right
+    const roleSize = 10.5
+    const dateSize = 9
+    const dateText = formatDateRange(exp.startDate, exp.endDate)
+    const dateW = ctx.fontRegular.widthOfTextAtSize(dateText, dateSize)
+
+    ctx.page.drawText(`${exp.role}, ${exp.company}`, {
+      x: ctx.x,
+      y: ctx.y,
+      size: roleSize,
+      font: ctx.fontBold,
+      color: C.text,
+    })
+    ctx.page.drawText(dateText, {
+      x: ctx.x + CONTENT_WIDTH - dateW,
+      y: ctx.y,
+      size: dateSize,
+      font: ctx.fontRegular,
+      color: C.textSecondary,
+    })
+    ctx.y -= roleSize * 1.45
+
+    // Highlights (ATS-friendly bullets)
+    for (const h of exp.highlights) {
+      const indent = 10
+      const maxW = CONTENT_WIDTH - indent - 2
+
+      ctx.page.drawText("-", {
+        x: ctx.x,
+        y: ctx.y,
+        size: 9,
+        font: ctx.fontBold,
+        color: C.bullet,
+      })
+
+      const lines = wrapText(h, maxW, ctx.fontRegular, 9)
+      for (let i = 0; i < lines.length; i++) {
+        ctx.page.drawText(lines[i], {
+          x: ctx.x + indent,
+          y: ctx.y,
+          size: 9,
+          font: ctx.fontRegular,
+          color: C.textSecondary,
+        })
+        ctx.y -= 11.5
+      }
+    }
+    ctx.y -= 6
   }
 
-  // ── Skills section ──
-  const skillsSection = {
-    type: "div",
-    props: {
-      style: { display: "flex", flexDirection: "column", marginBottom: "24px" },
-      children: [
-        sectionHeading("Skills"),
-        {
-          type: "div",
-          props: {
-            style: { display: "flex", flexDirection: "column", gap: "14px" },
-            children: skillCategories.map((cat) => ({
-              type: "div",
-              props: {
-                style: { display: "flex", flexDirection: "row", gap: "10px", alignItems: "baseline" },
-                children: [
-                  {
-                    type: "span",
-                    props: {
-                      style: {
-                        fontFamily: "Raleway",
-                        fontWeight: 700,
-                        fontSize: 14,
-                        color: C.accent,
-                        minWidth: "160px",
-                      },
-                      children: cat.category,
-                    },
-                  },
-                  {
-                    type: "span",
-                    props: {
-                      style: {
-                        fontFamily: "Raleway",
-                        fontSize: 14,
-                        color: C.textSecondary,
-                        lineHeight: 1.5,
-                      },
-                      children: cat.items.map((s) => s.name).join("  ·  "),
-                    },
-                  },
-                ],
-              },
-            })),
-          },
-        },
-      ],
-    },
+  // ── SELECTED PROJECTS ──
+  checkPage(70)
+  sectionHeader(ctx, "Selected Projects")
+
+  const topProjects = projects
+    .filter(p => p.type === "client" || ["DeckyVault", "GroundsPH", "WhatsCookin?"].includes(p.title))
+    .slice(0, 4)
+
+  for (const proj of topProjects) {
+    checkPage(35)
+    const projSize = 10
+    const metaSize = 9
+    const yearText = String(proj.year)
+    const yearW = ctx.fontRegular.widthOfTextAtSize(yearText, metaSize)
+
+    ctx.page.drawText(proj.title, {
+      x: ctx.x,
+      y: ctx.y,
+      size: projSize,
+      font: ctx.fontBold,
+      color: C.text,
+    })
+    ctx.page.drawText(yearText, {
+      x: ctx.x + CONTENT_WIDTH - yearW,
+      y: ctx.y,
+      size: metaSize,
+      font: ctx.fontRegular,
+      color: C.textSecondary,
+    })
+    ctx.y -= 12
+
+    const meta = `${proj.desc}  |  ${proj.techTags.slice(0, 4).join(", ")}`
+    drawText(ctx, meta, { size: 9, color: C.textSecondary, lineHeight: 12, maxWidth: CONTENT_WIDTH })
+    ctx.y -= 4
   }
 
-  // ── Education section (only if data exists) ──
-  const educationSection =
-    education.length > 0
-      ? {
-          type: "div",
-          props: {
-            style: { display: "flex", flexDirection: "column", marginBottom: "24px" },
-            children: [
-              sectionHeading("Education"),
-              ...education.map((edu) => ({
-                type: "div",
-                props: {
-                  style: {
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "baseline",
-                    marginBottom: "8px",
-                  },
-                  children: [
-                    {
-                      type: "div",
-                      props: {
-                        style: { display: "flex", flexDirection: "row", gap: "6px" },
-                        children: [
-                          {
-                            type: "span",
-                            props: {
-                              style: { fontFamily: "Raleway", fontWeight: 700, fontSize: 15, color: C.text },
-                              children: edu.credential,
-                            },
-                          },
-                          {
-                            type: "span",
-                            props: {
-                              style: { fontFamily: "Raleway", fontSize: 15, color: C.textSecondary },
-                              children: `— ${edu.field}, ${edu.institution}`,
-                            },
-                          },
-                        ],
-                      },
-                    },
-                    {
-                      type: "span",
-                      props: {
-                        style: { fontFamily: "Fusion Pixel", fontSize: 12, color: C.textSecondary },
-                        children: String(edu.year),
-                      },
-                    },
-                  ],
-                },
-              })),
-            ],
-          },
-        }
-      : null
+  // ── TECHNICAL SKILLS ──
+  checkPage(70)
+  sectionHeader(ctx, "Technical Skills")
 
-  // ── Assemble page 1 ──
-  const children: any[] = [
-    headerSection,
-    summarySection,
-    experienceSection,
-    skillsSection,
-  ]
-  if (educationSection) children.push(educationSection)
+  for (const cat of skillCategories) {
+    checkPage(25)
+    const catSize = 9.5
+    const itemSize = 9.5
+    const catText = cat.category
+    const catW = ctx.fontBold.widthOfTextAtSize(catText, catSize)
 
-  // Add footer
-  children.push({
-    type: "div",
-    props: {
-      style: {
-        marginTop: "auto",
-        paddingTop: "16px",
-        borderTopWidth: "1px",
-        borderTopColor: C.rule,
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        fontFamily: "Fusion Pixel",
-        fontSize: 11,
+    ctx.page.drawText(catText, {
+      x: ctx.x,
+      y: ctx.y,
+      size: catSize,
+      font: ctx.fontBold,
+      color: C.accent,
+    })
+
+    const items = cat.items.map(s => s.name).join(", ")
+    const itemLines = wrapText(items, CONTENT_WIDTH - catW - 12, ctx.fontRegular, itemSize)
+    for (let i = 0; i < itemLines.length; i++) {
+      ctx.page.drawText(itemLines[i], {
+        x: ctx.x + catW + 10,
+        y: ctx.y,
+        size: itemSize,
+        font: ctx.fontRegular,
         color: C.textSecondary,
-      },
-      children: [
-        { type: "span", props: { children: "adrianbonpin.com" } },
-        { type: "span", props: { children: "Page 1" } },
-      ],
-    },
+      })
+      ctx.y -= 11.5
+    }
+    ctx.y -= 3
+  }
+
+  // ── EDUCATION ──
+  if (education.length > 0) {
+    checkPage(50)
+    sectionHeader(ctx, "Education")
+
+    for (const edu of education) {
+      checkPage(25)
+      const credSize = 10
+      const yearSize = 9
+      const yearText = String(edu.year)
+      const yearW = ctx.fontRegular.widthOfTextAtSize(yearText, yearSize)
+
+      const credText = `${edu.credential}, ${edu.field}`
+      ctx.page.drawText(credText, {
+        x: ctx.x,
+        y: ctx.y,
+        size: credSize,
+        font: ctx.fontBold,
+        color: C.text,
+      })
+      ctx.page.drawText(yearText, {
+        x: ctx.x + CONTENT_WIDTH - yearW,
+        y: ctx.y,
+        size: yearSize,
+        font: ctx.fontRegular,
+        color: C.textSecondary,
+      })
+      ctx.y -= 12
+
+      ctx.page.drawText(edu.institution, {
+        x: ctx.x,
+        y: ctx.y,
+        size: 9,
+        font: ctx.fontRegular,
+        color: C.textSecondary,
+      })
+      ctx.y -= 16
+    }
+  }
+
+  // ── FOOTER (last page only) ──
+  const lastPage = pdfDoc.getPages()[pdfDoc.getPages().length - 1]
+  const footerY = MARGIN - 14
+  const footerSize = 8
+
+  lastPage.drawText("adrianbonpin.com", {
+    x: MARGIN,
+    y: footerY,
+    size: footerSize,
+    font: ctx.fontRegular,
+    color: C.textSecondary,
   })
 
-  pages.push({
-    content: {
-      type: "div",
-      props: {
-        style: {
-          width: PAGE_WIDTH,
-          height: PAGE_HEIGHT,
-          display: "flex",
-          flexDirection: "column",
-          backgroundColor: C.bg,
-          padding: MARGIN,
-        },
-        children,
-      },
-    },
-  })
-
-  return pages
-}
-
-// ─── Font Loading ───
-function loadLocalFont(path: string): ArrayBuffer {
-  return readFileSync(path)
-}
-
-async function loadFonts() {
-  // Fusion Pixel (monospace, for labels)
-  const fusionPixelFont = loadLocalFont(
-    resolve(
-      __dirname,
-      "../node_modules/@fontsource/fusion-pixel-12px-monospaced-jp/files/fusion-pixel-12px-monospaced-jp-latin-400-normal.woff"
-    )
-  )
-
-  // Raleway (headings + body)
-  const ralewayUrl =
-    "https://fonts.googleapis.com/css2?family=Raleway:wght@400;700"
-  const cssResponse = await fetch(ralewayUrl)
-  const cssText = await cssResponse.text()
-
-  // Extract font URLs from CSS (Google Fonts returns separate URLs per weight)
-  const fontUrlMatches = cssText.matchAll(/url\(([^)]+)\)/g)
-  const urls = Array.from(fontUrlMatches, (m) => m[1])
-
-  const ralewayFonts: ArrayBuffer[] = []
-  for (const url of urls) {
-    const fontResponse = await fetch(url)
-    if (!fontResponse.ok) throw new Error(`Failed to fetch font from ${url}`)
-    ralewayFonts.push(await fontResponse.arrayBuffer())
-  }
-
-  return {
-    fusionPixel: { name: "Fusion Pixel", data: fusionPixelFont, weight: 400, style: "normal" } as const,
-    raleway400: {
-      name: "Raleway",
-      data: ralewayFonts[0] || ralewayFonts[ralewayFonts.length - 1],
-      weight: 400,
-      style: "normal",
-    } as const,
-    raleway700: {
-      name: "Raleway",
-      data: ralewayFonts[1] || ralewayFonts[0],
-      weight: 700,
-      style: "normal",
-    } as const,
-  }
-}
-
-// ─── Main ───
-async function generateResume() {
-  console.log("📄 Generating resume PDF...")
-
-  const pages = buildPages()
-  console.log(`  📐 Layout built: ${pages.length} page(s)`)
-
-  const fonts = await loadFonts()
-  console.log("  🔤 Fonts loaded")
-
-  // Render each page: SVG → PNG
-  const pngPages: Uint8Array[] = []
-  for (let i = 0; i < pages.length; i++) {
-    console.log(`  🖼️  Rendering page ${i + 1}/${pages.length}...`)
-
-    const svg = await satori(pages[i].content, {
-      width: PAGE_WIDTH,
-      height: PAGE_HEIGHT,
-      fonts: [fonts.fusionPixel, fonts.raleway400, fonts.raleway700],
-    })
-
-    const resvg = new Resvg(svg, {
-      fitTo: { mode: "width", value: PAGE_WIDTH },
-    })
-    const pngData = resvg.render()
-    pngPages.push(pngData.asPng())
-  }
-
-  // Assemble PDF from PNG pages
-  console.log("  📚 Assembling PDF...")
-  const pdfDoc = await PDFDocument.create()
-
-  for (const pngBytes of pngPages) {
-    const pngImage = await pdfDoc.embedPng(pngBytes)
-    const page = pdfDoc.addPage([PAGE_WIDTH, PAGE_HEIGHT])
-    page.drawImage(pngImage, {
-      x: 0,
-      y: 0,
-      width: PAGE_WIDTH,
-      height: PAGE_HEIGHT,
-    })
-  }
-
+  // Save
   const pdfBytes = await pdfDoc.save()
-
-  // Ensure public directory exists
   const outputDir = dirname(OUTPUT_PATH)
-  if (!existsSync(outputDir)) {
-    mkdirSync(outputDir, { recursive: true })
-  }
-
+  if (!existsSync(outputDir)) mkdirSync(outputDir, { recursive: true })
   writeFileSync(OUTPUT_PATH, pdfBytes)
-  console.log(`  ✅ Resume PDF written to ${OUTPUT_PATH} (${(pdfBytes.length / 1024).toFixed(0)} KB)`)
+
+  const kb = (pdfBytes.length / 1024).toFixed(1)
+  console.log(`📄 Resume PDF saved: ${OUTPUT_PATH} (${kb} KB, ${pdfDoc.getPages().length} page${pdfDoc.getPages().length > 1 ? "s" : ""})`)
 }
 
-// Run
-generateResume().catch((error) => {
-  console.error("❌ Failed to generate resume PDF:", error)
+buildResume().catch((err) => {
+  console.error("❌ Failed to generate resume:", err)
   process.exit(1)
 })

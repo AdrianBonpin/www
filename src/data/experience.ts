@@ -11,7 +11,7 @@ export const experiences: Experience[] = [
       "Built 10+ custom websites and web applications for clients across industries",
       "Developed with Next.js, Astro, Tailwind CSS, and Cloudflare deployments",
       "Managed full project lifecycle from client onboarding to production launch",
-      "Delivered responsive, accessible, and performant sites with Lighthouse scores ≥ 95",
+      "Delivered responsive, accessible, and performant sites with Lighthouse scores >= 95",
     ],
     type: "freelance",
   },
