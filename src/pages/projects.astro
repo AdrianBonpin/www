@@ -2,7 +2,6 @@
 // src/pages/projects.astro
 import Base from "../layouts/base.astro"
 import SectionHeading from "../components/section-heading.astro"
-import ProjectCard from "../components/project-card.astro"
 import ProjectFilter from "../components/project-filter.astro"
 import { projects } from "../data/projects"
 import { siteConfig } from "../data/site-config"
@@ -12,31 +11,79 @@ import { siteConfig } from "../data/site-config"
   title={`Projects — ${siteConfig.name}`}
   description="Portfolio of web development projects by Adrian Bonpin — client work and personal projects built with Next.js, Astro, and more."
 >
-  <main class="pt-20 pb-10 space-y-8">
-    <SectionHeading
-      as="h1"
-      title="Projects"
-      subtitle="Client work and personal projects. Filter by type, framework, or year."
-    />
+  <main class="pt-20 pb-10">
+    <div class="projects-heading" style="opacity: 0;">
+      <SectionHeading
+        as="h1"
+        title="Projects"
+        subtitle="Client work and personal projects. Filter by type, framework, or year."
+      />
+    </div>
 
-    <ProjectFilter projects={projects} />
+    <div class="projects-filter" style="opacity: 0;">
+      <ProjectFilter projects={projects} />
+    </div>
 
-    <div class="w-full max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {projects.map((project) => (
-        <div
+    <!-- Project cards — bordered grid, no bg, no gap -->
+    <div class="w-full max-w-7xl mx-auto mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      {projects.map((project, i) => (
+        <a
+          href={project.link}
+          target="_blank"
+          class="group flex flex-col outline outline-1 -outline-offset-1 outline-text/10 overflow-hidden hover:outline-primary/50 hover:z-10 transition-all duration-300 project-card"
+          style="opacity: 0;"
           data-project-card
           data-type={project.type}
           data-framework={project.framework}
           data-year={String(project.year)}
         >
-          <ProjectCard project={project} />
-        </div>
+          <!-- Image -->
+          <div class="aspect-video">
+            <img
+              src={project.img.src}
+              alt={project.title}
+              class="w-full h-full object-cover object-top transition-transform duration-300"
+            />
+          </div>
+
+          <!-- Content -->
+          <div class="p-4 flex flex-col flex-1">
+            <!-- Index + title + year row -->
+            <div class="flex items-baseline justify-between">
+              <div class="flex items-baseline gap-2 min-w-0">
+                <span class="inline-flex items-center gap-1 shrink-0">
+                  <span class="w-1 h-1 rounded-full bg-primary/50 shrink-0"></span>
+                  <span class="text-xs font-pixel text-text/30 tabular-nums">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                </span>
+                <h3 class="text-base sm:text-lg font-bold group-hover:text-primary transition-colors truncate">
+                  {project.title}
+                </h3>
+              </div>
+              <span class="text-xs text-text/40 font-pixel tabular-nums whitespace-nowrap shrink-0">{project.year}</span>
+            </div>
+
+            <!-- Description -->
+            <p class="text-sm text-text/60 line-clamp-2 mt-2.5">{project.desc}</p>
+
+            <!-- Tags -->
+            <div class="flex flex-wrap items-center gap-x-2 gap-y-1 mt-auto pt-2.5">
+              <span class="text-xs font-pixel text-text/50 uppercase tracking-wider">{project.type}</span>
+              <span class="text-xs font-pixel px-2 py-0.5 rounded bg-accent/50 text-text/70">{project.framework}</span>
+              {project.techTags.slice(0, 2).map((tag) => (
+                <span class="text-xs font-pixel px-2 py-0.5 rounded bg-accent/30 text-text/60">{tag}</span>
+              ))}
+            </div>
+          </div>
+        </a>
       ))}
     </div>
 
+    <!-- No results message -->
     <div
       id="no-results"
-      class="w-full max-w-7xl mx-auto px-4 text-center py-10 text-text/50 hidden"
+      class="w-full max-w-7xl mx-auto px-4 text-center py-16 text-text/50 hidden"
     >
       <p class="text-lg font-pixel">No projects match your filters.</p>
     </div>
@@ -44,20 +91,72 @@ import { siteConfig } from "../data/site-config"
 </Base>
 
 <script>
-  // Show/hide "no results" message based on visible cards
-  function updateNoResults() {
-    const cards = document.querySelectorAll<HTMLElement>("[data-project-card]")
-    const visible = Array.from(cards).filter((c) => c.style.display !== "none")
-    const msg = document.getElementById("no-results")
-    if (msg) {
-      msg.classList.toggle("hidden", visible.length > 0 || cards.length === 0)
-    }
-  }
+  import { createTimeline } from "animejs"
 
-  // Patch the filter apply to also update no-results message
-  const observer = new MutationObserver(() => updateNoResults())
-  document.querySelectorAll<HTMLElement>("[data-project-card]").forEach((card) => {
-    observer.observe(card, { attributes: true, attributeFilter: ["style"] })
+  document.addEventListener("DOMContentLoaded", () => {
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches
+
+    if (prefersReducedMotion) {
+      document
+        .querySelectorAll('[style*="opacity: 0"]')
+        .forEach((el) => {
+          ;(el as HTMLElement).style.opacity = "1"
+          ;(el as HTMLElement).style.transform = ""
+        })
+    } else {
+      try {
+        const tl = createTimeline({
+          defaults: { ease: "easeOutExpo", duration: 700 },
+        })
+
+        tl.add(".projects-heading", {
+          opacity: [0, 1],
+          translateY: [20, 0],
+          duration: 800,
+        })
+
+        tl.add(
+          ".projects-filter",
+          { opacity: [0, 1], translateY: [16, 0], duration: 600 },
+          "-=500"
+        )
+
+        tl.add(
+          ".project-card",
+          {
+            opacity: [0, 1],
+            translateY: [16, 0],
+            duration: 500,
+            delay: (_el, i) => i * 60,
+          },
+          "-=400"
+        )
+      } catch {
+        document
+          .querySelectorAll('[style*="opacity: 0"]')
+          .forEach((el) => {
+            ;(el as HTMLElement).style.opacity = "1"
+            ;(el as HTMLElement).style.transform = ""
+          })
+      }
+    }
+
+    // ── No-results observer (existing logic) ──
+    function updateNoResults() {
+      const cards = document.querySelectorAll<HTMLElement>("[data-project-card]")
+      const visible = Array.from(cards).filter((c) => c.style.display !== "none")
+      const msg = document.getElementById("no-results")
+      if (msg) {
+        msg.classList.toggle("hidden", visible.length > 0 || cards.length === 0)
+      }
+    }
+
+    const observer = new MutationObserver(() => updateNoResults())
+    document.querySelectorAll<HTMLElement>("[data-project-card]").forEach((card) => {
+      observer.observe(card, { attributes: true, attributeFilter: ["style"] })
+    })
+    updateNoResults()
   })
-  document.addEventListener("DOMContentLoaded", updateNoResults)
 </script>

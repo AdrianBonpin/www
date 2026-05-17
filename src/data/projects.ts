@@ -1,29 +1,29 @@
 // src/data/projects.ts
-import type { ImageMetadata } from "astro"
+import type { ImageMetadata } from "astro";
 
 export interface Project {
-  title: string
-  type: "client" | "personal"
-  desc: string
-  img: ImageMetadata
-  link: string
-  framework: string
-  techTags: string[]
-  role: string
-  year: number
+  title: string;
+  type: "client" | "personal";
+  desc: string;
+  img: ImageMetadata;
+  link: string;
+  framework: string;
+  techTags: string[];
+  role: string;
+  year: number;
 }
 
-import devgo from "../assets/websites/devgo.png"
-import grounds from "../assets/websites/groundsph.jpeg"
-import inksight from "../assets/websites/inksight.png"
-import rdmd from "../assets/websites/rdmdstudio.webp"
-import palms from "../assets/websites/palmsagency.webp"
-import serialkitten from "../assets/websites/serialkitten.webp"
-import dermadoc from "../assets/websites/dermadoc.webp"
-import klbhs from "../assets/websites/klbhs.webp"
-import whatscookin from "../assets/websites/whatscookin.webp"
-import sync2va from "../assets/websites/sync2va.webp"
-import deckyvault from "../assets/websites/deckyvault.png"
+import devgo from "../assets/websites/devgo.png";
+import grounds from "../assets/websites/groundsph.jpeg";
+import inksight from "../assets/websites/inksight.png";
+import rdmd from "../assets/websites/rdmdstudio.webp";
+import palms from "../assets/websites/palmsagency.webp";
+import serialkitten from "../assets/websites/serialkitten.webp";
+import dermadoc from "../assets/websites/dermadoc.webp";
+import klbhs from "../assets/websites/klbhs.webp";
+import whatscookin from "../assets/websites/whatscookin.webp";
+import sync2va from "../assets/websites/sync2va.webp";
+import deckyvault from "../assets/websites/deckyvault.png";
 
 export const projects: Project[] = [
   {
@@ -33,9 +33,9 @@ export const projects: Project[] = [
     img: deckyvault,
     link: "https://deckyvault.xyz",
     framework: "NextJs",
-    techTags: ["React", "Next.js", "Tailwind", "Supabase"],
+    techTags: ["React", "Next.js", "Tailwind", "PostgreSQL", "Elysia"],
     role: "Solo Developer",
-    year: 2025,
+    year: 2026,
   },
   {
     title: "DEVGO Website",
@@ -43,10 +43,10 @@ export const projects: Project[] = [
     desc: "Website for our software development agency, DEVGO",
     img: devgo,
     link: "https://devgo.studio",
-    framework: "NextJs",
-    techTags: ["React", "Next.js", "Tailwind", "Framer Motion"],
+    framework: "Astro",
+    techTags: ["Astro", "Tailwind", "PixiJs", "Anime.js"],
     role: "Solo Developer",
-    year: 2024,
+    year: 2026,
   },
   {
     title: "GroundsPH",
@@ -109,8 +109,8 @@ export const projects: Project[] = [
     desc: "Dermatology store in the Philippines",
     img: dermadoc,
     link: "https://dermadocskinspecialist.com",
-    framework: "NextJs",
-    techTags: ["React", "Next.js", "Tailwind"],
+    framework: "Astro",
+    techTags: ["Astro", "Tailwind"],
     role: "Solo Developer",
     year: 2024,
   },
@@ -147,4 +147,4 @@ export const projects: Project[] = [
     role: "Solo Developer",
     year: 2024,
   },
-]
+];

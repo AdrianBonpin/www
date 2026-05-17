@@ -1,30 +1,88 @@
 ---
-// src/components/skills-grid.astro
 import { skillCategories } from "../data/skills"
 
 function levelLabel(l: number): string {
   const labels = ["", "Familiar", "Comfortable", "Proficient", "Advanced", "Expert"]
   return labels[l] ?? ""
 }
+
+function levelColor(l: number): string {
+  if (l >= 5) return "bg-primary shadow-[0_0_8px_rgba(99,89,133,0.55)]"
+  if (l === 4) return "bg-primary/80"
+  if (l === 3) return "bg-primary/60"
+  if (l === 2) return "bg-primary/40"
+  return "bg-primary/25"
+}
 ---
 
 <div class="w-full max-w-7xl mx-auto px-4">
   {
-    skillCategories.map((cat) => (
-      <div class="mb-8">
-        <h3 class="text-lg md:text-xl font-semibold mb-4 text-primary">{cat.category}</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-          {cat.items.map((skill) => (
-            <div class="flex flex-col gap-1 p-3 rounded-lg border border-text/10 bg-text/5">
-              <div class="flex flex-row justify-between items-center">
-                <span class="font-medium">{skill.name}</span>
-                <span class="text-xs text-text/50 font-pixel">{levelLabel(skill.level)}</span>
+    skillCategories.map((cat, ci) => (
+      <div class="border-t border-text/10">
+        {/* Category header */}
+        <div class="flex items-baseline gap-3 py-5 md:py-6 group/cat">
+          <span class="text-xs font-pixel text-primary tabular-nums">
+            {String(ci + 1).padStart(2, "0")}
+          </span>
+          <h3 class="text-lg md:text-xl font-bold group-hover/cat:text-primary transition-colors">
+            {cat.category}
+          </h3>
+          <span class="text-xs font-pixel text-text/30 ml-auto">
+            {cat.items.length} items
+          </span>
+        </div>
+
+        {/* Skill cards grid */}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-0 mb-8">
+          {cat.items.map((skill, si) => (
+            <div
+              class:list={[
+                "group flex flex-col gap-2.5 p-4 md:p-5 outline outline-1 -outline-offset-1 outline-text/10",
+                "hover:outline-primary/40 hover:bg-accent/10 transition-all duration-300",
+                "relative overflow-hidden",
+              ]}
+              style="opacity: 0;"
+              data-skill-card
+            >
+              {/* Corner accent dot */}
+              <div
+                class:list={[
+                  "absolute top-3 right-3 w-1.5 h-1.5 rounded-full transition-colors duration-300",
+                  skill.level >= 4 ? "bg-primary group-hover:shadow-[0_0_6px_rgba(99,89,133,0.6)]" : "bg-text/20",
+                ]}
+              />
+
+              <div class="flex justify-between items-start gap-3 pr-5">
+                <span class="font-semibold text-[15px] group-hover:text-primary transition-colors duration-300">
+                  {skill.name}
+                </span>
+                <span class="text-[10px] font-pixel text-text/50 uppercase tracking-wider shrink-0 pt-0.5 group-hover:text-text/70 transition-colors">
+                  {levelLabel(skill.level)}
+                </span>
               </div>
-              <div class="w-full h-1.5 rounded-full bg-accent/50 overflow-hidden">
-                <div
-                  class="h-full rounded-full bg-primary transition-all"
-                  style={`width: ${(skill.level / 5) * 100}%`}
-                ></div>
+
+              {/* Segmented level bar */}
+              <div class="flex gap-[3px] h-2">
+                {[1, 2, 3, 4, 5].map((step) => (
+                  <div
+                    class:list={[
+                      "flex-1 rounded-full transition-all duration-300",
+                      step <= skill.level
+                        ? levelColor(skill.level)
+                        : "bg-text/[0.08]",
+                    ]}
+                  />
+                ))}
+              </div>
+
+              {/* Level text below bar */}
+              <div class="flex justify-between items-center">
+                <span class="text-[10px] font-pixel text-text/30 tabular-nums">
+                  {skill.level}/5
+                </span>
+                <span class="text-[10px] font-pixel text-text/30">
+                  {String(si + 1).padStart(2, "0")}
+                </span>
               </div>
             </div>
           ))}
@@ -33,3 +91,40 @@ function levelLabel(l: number): string {
     ))
   }
 </div>
+
+<script>
+  import { animate } from "animejs"
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches
+
+    const cards = document.querySelectorAll("[data-skill-card]")
+    if (prefersReducedMotion) {
+      cards.forEach((el) => ((el as HTMLElement).style.opacity = "1"))
+      return
+    }
+
+    // Use IntersectionObserver to animate cards as they scroll into view
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement
+            animate(el, {
+              opacity: [0, 1],
+              translateY: [12, 0],
+              duration: 500,
+              ease: "easeOutExpo",
+            })
+            observer.unobserve(el)
+          }
+        })
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+    )
+
+    cards.forEach((el) => observer.observe(el))
+  })
+</script>

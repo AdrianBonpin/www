@@ -2,10 +2,8 @@
 // src/pages/index.astro
 import Base from "../layouts/base.astro"
 import HeroRain from "../components/hero-rain.astro"
-import SectionHeading from "../components/section-heading.astro"
-import ProjectCard from "../components/project-card.astro"
-import SkillsCompact from "../components/skills-compact.astro"
 import { projects } from "../data/projects"
+import { skillCategories } from "../data/skills"
 import { siteConfig } from "../data/site-config"
 import { ArrowRightIcon } from "@lucide/astro"
 
@@ -13,109 +11,278 @@ import { ArrowRightIcon } from "@lucide/astro"
 const featuredProjects = projects
   .sort((a, b) => b.year - a.year)
   .slice(0, 4)
+
+// Dynamic stats
+const currentYear = new Date().getFullYear()
+const firstProjectYear = Math.min(...projects.map((p) => p.year))
+const yearsOfExperience = currentYear - firstProjectYear
 ---
 
 <Base>
   {/* Hero Section */}
   <section
     id="top"
-    class="w-full min-h-dvh flex flex-col justify-center pt-14 select-none relative"
+    class="w-full min-h-dvh flex flex-col items-center pt-14 select-none relative overflow-hidden"
   >
-    <h1 class="w-full flex flex-row md:justify-end max-w-7xl mx-auto text-4xl py-10 px-4 absolute top-10 left-1/2 -translate-x-1/2 opacity-0">
-      <div class="bg-background p-2 rounded-lg z-1">
-        {siteConfig.title}<br />
-        <span class="text-2xl md:text-3xl font-normal text-text/60">Building Dreams. One Line at a Time.</span>
-      </div>
-    </h1>
-    <HeroRain />
+    {/* Rain as full-bleed background */}
+    <div class="absolute inset-0 z-0 flex flex-col">
+      <HeroRain />
+    </div>
+
+    {/* Content overlay — centered hero */}
     <div
-      id="scroll-hint"
-      class="w-full max-w-7xl mx-auto text-xl px-4 text-center font-pixel py-4 text-text/70 opacity-0"
+      class="relative z-10 flex flex-col items-center justify-center w-full flex-1 max-w-7xl mx-auto px-4 py-6 md:py-8 text-center pointer-events-none"
     >
-      v Scroll Down v
+      {/* Subtle radial glow behind text for readability over rain */}
+      <div
+        class="absolute inset-0 z-[-1] pointer-events-none"
+        style="background: radial-gradient(ellipse 60% 50% at 50% 45%, rgba(24,18,43,0.85) 0%, transparent 70%);"
+      />
+
+      {/* Pixel label */}
+      <p
+        id="hero-label"
+        class="font-pixel text-xs sm:text-sm text-primary tracking-[0.3em] uppercase mb-4 sm:mb-6 opacity-0"
+      >
+        Portfolio {new Date().getFullYear()}
+      </p>
+
+      {/* Main title */}
+      <h1
+        class="hero-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight mb-3 sm:mb-4 opacity-0"
+        style="text-shadow: 0 4px 32px rgba(24,18,43,0.9), 0 2px 8px rgba(24,18,43,0.7);"
+        set:html={siteConfig.title.replace(' & ', ' &<br class="hidden sm:block" />')}
+      />
+
+      {/* Tagline */}
+      <p
+        id="hero-tagline"
+        class="text-base sm:text-lg md:text-xl font-normal text-text/50 mb-8 sm:mb-10 max-w-xl opacity-0"
+      >
+        Building Dreams. One Line at a Time.
+      </p>
+
+      {/* CTAs */}
+      <div
+        id="hero-ctas"
+        class="flex flex-col sm:flex-row gap-3 sm:gap-4 opacity-0 pointer-events-auto"
+      >
+        <a
+          href="/projects"
+          class="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 bg-primary/90 backdrop-blur-sm text-white rounded-xl font-semibold hover:bg-secondary transition-all duration-300 group shadow-[0_0_24px_-4px_rgba(99,89,133,0.5)] hover:shadow-[0_0_32px_-2px_rgba(99,89,133,0.7)] hover:-translate-y-0.5"
+        >
+          <span>View My Work</span>
+          <ArrowRightIcon class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+        </a>
+        <a
+          href="/resume"
+          class="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 bg-background/30 backdrop-blur-sm border border-primary/60 text-primary rounded-xl font-semibold hover:bg-primary/15 hover:border-primary hover:text-white transition-all duration-300 group hover:-translate-y-0.5"
+        >
+          <span>See My Resume</span>
+          <ArrowRightIcon class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+        </a>
+      </div>
+    </div>
+
+    {/* Scroll hint */}
+    <div class="relative z-10 w-full flex justify-center pb-8 pointer-events-none">
+      <span
+        id="scroll-hint"
+        class="text-xs sm:text-sm font-pixel text-text/40 opacity-0"
+      >
+        v Scroll Down v
+      </span>
     </div>
   </section>
 
-  {/* CTA Row */}
-  <section class="w-full max-w-7xl mx-auto px-4 py-10">
-    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <a
-        href="/projects"
-        class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-secondary transition-colors group"
-      >
-        View My Work
-        <ArrowRightIcon class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-      </a>
-      <a
-        href="/resume"
-        class="inline-flex items-center gap-2 px-6 py-3 border border-primary text-primary rounded-lg font-semibold hover:bg-primary hover:text-white transition-colors group"
-      >
-        See My Resume
-        <ArrowRightIcon class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-      </a>
+  {/* Featured Projects — Index List */}
+  <section class="w-full">
+    <style>
+      #featured-preview {
+        transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        transform: translateY(-50%) scale(0.95);
+        opacity: 0;
+      }
+      #featured-preview.visible {
+        transform: translateY(-50%) scale(1);
+        opacity: 1;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #featured-preview {
+          transition: opacity 0.15s ease;
+          transform: translateY(-50%);
+        }
+      }
+    </style>
+
+    <div class="w-full pt-20 pb-16" id="featured-list">
+      {/* Section header */}
+      <div class="w-full max-w-7xl mx-auto px-4 mb-10 md:mb-14">
+        <p class="text-xs md:text-sm font-pixel text-primary tracking-widest uppercase mb-2">Portfolio</p>
+        <h2 class="text-4xl md:text-5xl font-bold">Featured Projects</h2>
+      </div>
+
+      {/* Project list — full bleed */}
+      <div class="w-full">
+        {/* Floating preview — desktop only */}
+        <div
+          id="featured-preview"
+          class="hidden md:block fixed pointer-events-none z-50"
+          style="right: 6vw; top: 50vh;"
+        >
+          <div class="overflow-hidden rounded shadow-[0_0_60px_-12px_rgba(99,89,133,0.4)]">
+            <img
+              id="featured-preview-img"
+              src=""
+              alt=""
+              class="w-[24vw] max-w-[340px] aspect-video object-cover object-top block"
+            />
+            <div class="px-4 py-2 bg-gradient-to-t from-background/90 to-transparent">
+              <span id="featured-preview-label" class="text-xs font-pixel text-text/80" />
+            </div>
+          </div>
+        </div>
+
+        {featuredProjects.map((project, i) => (
+          <a
+            href={project.link}
+            target="_blank"
+            class="group list-item block border-t border-text/10 transition-all hover:bg-accent/5"
+            data-img={project.img.src}
+            data-label={`${project.type} · ${project.framework}`}
+          >
+            <div class="transition-all group-hover:pl-4 md:group-hover:pl-8 px-4 md:px-8 lg:px-12 py-4 md:py-6">
+              <div class="flex flex-row items-baseline justify-between gap-4">
+                {/* Left: Index + Title */}
+                <div class="flex items-baseline gap-3 md:gap-6">
+                  <span class="inline-flex items-center gap-1 min-w-[2rem] md:min-w-[2.5rem] shrink-0">
+                    <span class="w-1 md:w-1.5 h-1 md:h-1.5 rounded-full bg-primary/50 shrink-0"></span>
+                    <span class="text-xs md:text-sm font-pixel text-text/30 tabular-nums">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                  </span>
+                  <h2 class="text-lg md:text-3xl lg:text-4xl font-bold group-hover:text-primary transition-colors">
+                    {project.title}
+                  </h2>
+                </div>
+
+                {/* Desktop: type + year */}
+                <div class="hidden md:flex items-center gap-6 text-sm text-text/50 font-pixel pr-2">
+                  <span class="uppercase tracking-wider">{project.type}</span>
+                  <span class="tabular-nums">{project.year}</span>
+                </div>
+
+                {/* Mobile: year only */}
+                <span class="md:hidden text-xs text-text/40 font-pixel tabular-nums whitespace-nowrap">{project.year}</span>
+              </div>
+
+              {/* Mobile: image + tags */}
+              <div class="md:hidden mt-3">
+                <img
+                  src={project.img.src}
+                  alt={project.title}
+                  class="w-full aspect-video object-cover object-top rounded-lg border border-text/10"
+                />
+                <div class="flex flex-wrap items-center gap-x-2 gap-y-1 mt-2 text-xs">
+                  <span class="font-pixel text-text/50 uppercase tracking-wider">{project.type}</span>
+                  <span class="font-pixel px-2 py-0.5 rounded bg-accent/50 text-text/70">{project.framework}</span>
+                  {project.techTags.slice(0, 2).map((tag) => (
+                    <span class="font-pixel px-2 py-0.5 rounded bg-accent/30 text-text/60">{tag}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </a>
+        ))}
+
+        {/* Bottom border */}
+        <div class="w-full border-t border-text/10" />
+      </div>
+
+      {/* CTA */}
+      <div class="w-full max-w-7xl mx-auto px-4 mt-14 text-center">
+        <a href="/projects" class="inline-flex items-center gap-2 text-primary hover:underline font-pixel text-sm">
+          View All Projects <span>→</span>
+        </a>
+      </div>
     </div>
   </section>
 
-  {/* Featured Projects */}
-  <section class="w-full py-10">
-    <SectionHeading
-      title="Featured Projects"
-      subtitle="Recent client work and personal projects"
-    />
-    <div class="w-full max-w-7xl mx-auto px-4 mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      {featuredProjects.map((project) => (
-        <ProjectCard project={project} />
-      ))}
-    </div>
-    <div class="w-full max-w-7xl mx-auto px-4 mt-6 text-center">
-      <a
-        href="/projects"
-        class="inline-flex items-center gap-1 text-primary hover:underline font-pixel text-sm"
-      >
-        View All Projects →
-      </a>
-    </div>
-  </section>
+  <script>
+    const featuredList = document.getElementById('featured-list')
+    const featuredPreview = document.getElementById('featured-preview')
+    const featuredImg = document.getElementById('featured-preview-img')
+    const featuredLabel = document.getElementById('featured-preview-label')
+    if (featuredList && featuredPreview && featuredImg) {
+      const items = featuredList.querySelectorAll('.list-item')
+      items.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+          const src = item.getAttribute('data-img')
+          const label = item.getAttribute('data-label')
+          if (src) {
+            featuredImg.src = src
+            featuredImg.alt = item.querySelector('h2')?.textContent || ''
+            if (label && featuredLabel) featuredLabel.textContent = label
+            featuredPreview.classList.add('visible')
+          }
+        })
+        item.addEventListener('mouseleave', () => {
+          featuredPreview.classList.remove('visible')
+        })
+      })
+    }
+  </script>
 
-  {/* Skills at a Glance */}
-  <section class="w-full py-10 border-t border-text/10">
-    <SectionHeading
-      title="Skills at a Glance"
-    />
-    <div class="mt-6">
-      <SkillsCompact />
-    </div>
-    <div class="w-full max-w-7xl mx-auto px-4 mt-4 text-center">
-      <a
-        href="/about"
-        class="inline-flex items-center gap-1 text-primary hover:underline font-pixel text-sm"
-      >
-        Full Skills Breakdown →
-      </a>
-    </div>
-  </section>
-
-  {/* Trust Signals */}
-  <section class="w-full py-10 border-t border-text/10">
+  {/* Skills at a Glance — Full Width */}
+  <section class="w-full py-24 border-t border-text/10">
     <div class="w-full max-w-7xl mx-auto px-4">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-16">
         <div>
-          <p class="text-3xl md:text-4xl font-bold text-primary">{projects.length}+</p>
-          <p class="text-sm text-text/60 mt-1">Projects Delivered</p>
+          <p class="text-sm font-pixel text-primary tracking-widest uppercase mb-3">Capabilities</p>
+          <h2 class="text-4xl md:text-5xl font-bold">Skills at a Glance</h2>
+        </div>
+        <a
+          href="/about"
+          class="mt-4 md:mt-0 inline-flex items-center gap-1 text-primary hover:underline font-pixel text-sm"
+        >
+          Full Breakdown →
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-12">
+        {skillCategories.map((cat) => (
+          <div>
+            <h3 class="text-lg font-semibold mb-3 text-primary font-pixel">{cat.category}</h3>
+            <p class="text-text/70 leading-relaxed">
+              {cat.items.map((s) => s.name).join(" · ")}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* Trust Signals — Full Bleed Stats Bar */}
+  <section class="w-full py-24 border-t border-text/10 bg-accent/20">
+    <div class="w-full max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4">
+        <div>
+          <p class="text-5xl md:text-7xl font-bold text-primary leading-none">{projects.length}</p>
+          <p class="text-sm text-text/60 mt-3 font-pixel uppercase tracking-wider">Portfolio</p>
         </div>
         <div>
-          <p class="text-3xl md:text-4xl font-bold text-primary">2+</p>
-          <p class="text-sm text-text/60 mt-1">Years Experience</p>
+          <p class="text-5xl md:text-7xl font-bold text-primary leading-none">{yearsOfExperience}+</p>
+          <p class="text-sm text-text/60 mt-3 font-pixel uppercase tracking-wider">Years</p>
         </div>
         <div>
-          <p class="text-3xl md:text-4xl font-bold text-primary">
+          <p class="text-5xl md:text-7xl font-bold text-primary leading-none">
             {projects.filter((p) => p.type === "client").length}
           </p>
-          <p class="text-sm text-text/60 mt-1">Happy Clients</p>
+          <p class="text-sm text-text/60 mt-3 font-pixel uppercase tracking-wider">Clients</p>
         </div>
         <div>
-          <p class="text-3xl md:text-4xl font-bold text-primary">100%</p>
-          <p class="text-sm text-text/60 mt-1">Custom Code</p>
+          <p class="text-5xl md:text-7xl font-bold text-primary leading-none">100%</p>
+          <p class="text-sm text-text/60 mt-3 font-pixel uppercase tracking-wider">Custom</p>
         </div>
       </div>
     </div>
@@ -125,7 +292,7 @@ const featuredProjects = projects
 <script>
   import { createTimeline } from "animejs"
 
-  const targets = ["nav", "#top h1", "#ascii-container", "#scroll-hint"]
+  const targets = ["nav", ".hero-heading", "#hero-label", "#hero-tagline", "#ascii-container", "#scroll-hint", "#hero-ctas"]
 
   function showAll() {
     targets.forEach((selector) => {
@@ -165,9 +332,12 @@ const featuredProjects = projects
       })
 
       tl.add("nav", { opacity: [0, 1], translateY: [-8, 0], duration: 600 })
-      tl.add("#top h1", { opacity: [0, 1], translateY: [20, 0], duration: 900 }, "-=200")
-      tl.add("#ascii-container", { opacity: [0, 1], translateY: [16, 0], duration: 1000 }, "-=400")
-      tl.add("#scroll-hint", { opacity: [0, 1], translateY: [8, 0], duration: 700 }, "-=200")
+      tl.add(".hero-heading", { opacity: [0, 1], translateY: [24, 0], duration: 1000 }, "-=200")
+      tl.add("#hero-label", { opacity: [0, 1], translateY: [12, 0], duration: 700 }, "-=600")
+      tl.add("#hero-tagline", { opacity: [0, 1], translateY: [14, 0], duration: 800 }, "-=600")
+      tl.add("#ascii-container", { opacity: [0, 1], translateY: [16, 0], duration: 1000 }, "-=600")
+      tl.add("#hero-ctas", { opacity: [0, 1], translateY: [12, 0], duration: 800 }, "-=400")
+      tl.add("#scroll-hint", { opacity: [0, 1], translateY: [8, 0], duration: 700 }, "-=300")
     } catch {
       showAll()
     }

@@ -1,10 +1,10 @@
 ---
-// src/components/contact-form.astro
+import { SendIcon, ArrowRightIcon } from "@lucide/astro"
 ---
 
 <form
   id="contact-form"
-  class="w-full max-w-2xl mx-auto space-y-5"
+  class="w-full max-w-2xl space-y-6"
   novalidate
 >
   {/* Honeypot — hidden from humans, visible to bots */}
@@ -13,35 +13,44 @@
     <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
   </div>
 
-  <div>
-    <label for="name" class="block text-sm font-medium mb-1">Name</label>
-    <input
-      type="text"
-      id="name"
-      name="name"
-      required
-      minlength="2"
-      maxlength="100"
-      class="w-full px-4 py-3 rounded-lg bg-accent border border-text/10 text-text placeholder:text-text/30 focus:outline-none focus:border-primary transition-colors"
-      placeholder="Your name"
-    />
+  {/* Name + Email row on md+ */}
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+    <div class="space-y-2">
+      <label for="name" class="block text-[11px] font-pixel text-primary uppercase tracking-widest">
+        Name
+      </label>
+      <input
+        type="text"
+        id="name"
+        name="name"
+        required
+        minlength="2"
+        maxlength="100"
+        class="w-full px-4 py-3 rounded-xl bg-transparent border border-text/10 text-text placeholder:text-text/25 focus:outline-none focus:border-primary/60 focus:shadow-[0_0_0_3px_rgba(99,89,133,0.12)] transition-all duration-300"
+        placeholder="Your name"
+      />
+    </div>
+
+    <div class="space-y-2">
+      <label for="email" class="block text-[11px] font-pixel text-primary uppercase tracking-widest">
+        Email
+      </label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        required
+        maxlength="254"
+        class="w-full px-4 py-3 rounded-xl bg-transparent border border-text/10 text-text placeholder:text-text/25 focus:outline-none focus:border-primary/60 focus:shadow-[0_0_0_3px_rgba(99,89,133,0.12)] transition-all duration-300"
+        placeholder="you@example.com"
+      />
+    </div>
   </div>
 
-  <div>
-    <label for="email" class="block text-sm font-medium mb-1">Email</label>
-    <input
-      type="email"
-      id="email"
-      name="email"
-      required
-      maxlength="254"
-      class="w-full px-4 py-3 rounded-lg bg-accent border border-text/10 text-text placeholder:text-text/30 focus:outline-none focus:border-primary transition-colors"
-      placeholder="you@example.com"
-    />
-  </div>
-
-  <div>
-    <label for="subject" class="block text-sm font-medium mb-1">Subject</label>
+  <div class="space-y-2">
+    <label for="subject" class="block text-[11px] font-pixel text-primary uppercase tracking-widest">
+      Subject
+    </label>
     <input
       type="text"
       id="subject"
@@ -49,13 +58,15 @@
       required
       minlength="2"
       maxlength="200"
-      class="w-full px-4 py-3 rounded-lg bg-accent border border-text/10 text-text placeholder:text-text/30 focus:outline-none focus:border-primary transition-colors"
+      class="w-full px-4 py-3 rounded-xl bg-transparent border border-text/10 text-text placeholder:text-text/25 focus:outline-none focus:border-primary/60 focus:shadow-[0_0_0_3px_rgba(99,89,133,0.12)] transition-all duration-300"
       placeholder="What's this about?"
     />
   </div>
 
-  <div>
-    <label for="message" class="block text-sm font-medium mb-1">Message</label>
+  <div class="space-y-2">
+    <label for="message" class="block text-[11px] font-pixel text-primary uppercase tracking-widest">
+      Message
+    </label>
     <textarea
       id="message"
       name="message"
@@ -63,8 +74,8 @@
       minlength="10"
       maxlength="5000"
       rows="5"
-      class="w-full px-4 py-3 rounded-lg bg-accent border border-text/10 text-text placeholder:text-text/30 focus:outline-none focus:border-primary transition-colors resize-y"
-      placeholder="Your message..."
+      class="w-full px-4 py-3 rounded-xl bg-transparent border border-text/10 text-text placeholder:text-text/25 focus:outline-none focus:border-primary/60 focus:shadow-[0_0_0_3px_rgba(99,89,133,0.12)] transition-all duration-300 resize-y"
+      placeholder="Tell me about your project, timeline, or anything else..."
     ></textarea>
   </div>
 
@@ -72,9 +83,12 @@
 
   <button
     type="submit"
-    class="w-full px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+    id="submit-btn"
+    class="w-full inline-flex items-center justify-center gap-2.5 px-6 py-3.5 bg-primary/90 backdrop-blur-sm text-white rounded-xl font-semibold hover:bg-secondary transition-all duration-300 group shadow-[0_0_20px_-4px_rgba(99,89,133,0.4)] hover:shadow-[0_0_28px_-2px_rgba(99,89,133,0.6)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
   >
-    Send Message
+    <SendIcon class="w-5 h-5" />
+    <span id="submit-text">Send Message</span>
+    <ArrowRightIcon class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
   </button>
 </form>
 
@@ -96,7 +110,8 @@
   document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("contact-form") as HTMLFormElement | null
     const status = document.getElementById("form-status") as HTMLElement | null
-    const submitBtn = form?.querySelector("button[type=submit]") as HTMLButtonElement | null
+    const submitBtn = document.getElementById("submit-btn") as HTMLButtonElement | null
+    const submitText = document.getElementById("submit-text") as HTMLElement | null
 
     if (!form || !status || !submitBtn) return
 
@@ -120,7 +135,7 @@
 
       // Submit
       submitBtn.disabled = true
-      submitBtn.textContent = "Sending..."
+      if (submitText) submitText.textContent = "Sending..."
       status.className = "hidden"
 
       try {
@@ -148,7 +163,7 @@
         status.classList.remove("hidden")
       } finally {
         submitBtn.disabled = false
-        submitBtn.textContent = "Send Message"
+        if (submitText) submitText.textContent = "Send Message"
       }
     })
   })

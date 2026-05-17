@@ -1,69 +1,306 @@
 ---
-// src/pages/about.astro
 import Base from "../layouts/base.astro"
-import SectionHeading from "../components/section-heading.astro"
 import SkillsGrid from "../components/skills-grid.astro"
 import ExperienceTimeline from "../components/experience-timeline.astro"
 import { experiences } from "../data/experience"
 import { education } from "../data/education"
+import { projects } from "../data/projects"
+import { skillCategories } from "../data/skills"
 import { siteConfig } from "../data/site-config"
+import {
+  MapPinIcon,
+  Code2Icon,
+  TerminalIcon,
+  GlobeIcon,
+  RocketIcon,
+  MailIcon,
+  ArrowRightIcon,
+  CpuIcon,
+  KeyboardIcon,
+  SparklesIcon,
+  PaletteIcon,
+} from "@lucide/astro"
+
+const currentYear = new Date().getFullYear()
+const firstProjectYear = Math.min(...projects.map((p) => p.year))
+const yearsOfExperience = currentYear - firstProjectYear
+const clientCount = projects.filter((p) => p.type === "client").length
+const techCount = skillCategories.reduce(
+  (acc, cat) => acc + cat.items.length,
+  0
+)
+
+const services = [
+  {
+    icon: GlobeIcon,
+    title: "Web Development",
+    desc: "Custom websites and web applications with Next.js, Astro, and modern tooling.",
+  },
+  {
+    icon: PaletteIcon,
+    title: "UI / UX Design",
+    desc: "Pixel-perfect interfaces with a focus on accessibility, performance, and delight.",
+  },
+  {
+    icon: RocketIcon,
+    title: "Performance & SEO",
+    desc: "Lightning-fast builds with optimized Core Web Vitals and search visibility.",
+  },
+  {
+    icon: TerminalIcon,
+    title: "Full-Stack Systems",
+    desc: "End-to-end solutions from database architecture to serverless deployments.",
+  },
+]
+
+const interests = [
+  {
+    icon: KeyboardIcon,
+    title: "Split Keyboards",
+    desc: "Tinkering with ergonomic layouts and custom firmware.",
+  },
+  {
+    icon: CpuIcon,
+    title: "3D Printing",
+    desc: "Designing and printing prototypes, cases, and mechanical parts.",
+  },
+  {
+    icon: SparklesIcon,
+    title: "New Tech",
+    desc: "Exploring frameworks, languages, and tools before they hit mainstream.",
+  },
+  {
+    icon: Code2Icon,
+    title: "Open Source",
+    desc: "Contributing to and building tools for the developer community.",
+  },
+]
 ---
 
 <Base
   title={`About — ${siteConfig.name}`}
   description="Learn more about Adrian Bonpin — full-stack developer, skills, experience, and background."
 >
-  <main class="pt-20 pb-10 space-y-16">
-    {/* Header */}
-    <section class="w-full max-w-7xl mx-auto px-4 flex flex-col md:flex-row gap-8 items-start">
-      <div class="flex-1 space-y-4">
-        <h1 class="text-3xl md:text-5xl font-bold">Hey, I'm Adrian</h1>
-        <p class="text-xl text-text/70">{siteConfig.title}</p>
-        <p class="text-lg text-text/80 max-w-prose text-justify">
-          I'm a web and software developer based in the {siteConfig.location}, passionate about
-          creating unique digital experiences. I specialize in Next.js and Astro,
-          and I love building things that are both beautiful and functional.
-        </p>
-        <p class="text-lg text-text/80 max-w-prose text-justify">
-          I work with the talented team at{" "}
-          <a href="https://devgo.studio" target="_blank" class="text-primary underline">DEVGO Studio</a>,
-          where we craft custom websites and web applications for clients. When I'm not coding,
-          I'm tinkering with split keyboards, 3D printing, or exploring new tech.
-        </p>
-      </div>
-      {/* Photo placeholder — replace src with an actual photo */}
-      <div class="flex-shrink-0 w-48 h-48 md:w-64 md:h-64 rounded-xl bg-accent/50 border border-text/10 overflow-hidden">
-        <div class="w-full h-full flex items-center justify-center text-text/30 text-sm font-pixel">
-          Photo
+  <main class="pt-20 pb-10 space-y-0">
+    {/* ─── HERO ─── */}
+    <section
+      id="about-hero"
+      class="w-full relative overflow-hidden"
+    >
+      <div
+        class="w-full max-w-7xl mx-auto px-4 py-16 md:py-24 flex flex-col md:flex-row gap-12 items-center"
+      >
+        {/* Left: Text */}
+        <div class="flex-1 space-y-6 about-hero-item" style="opacity: 0;">
+          <p class="text-xs md:text-sm font-pixel text-primary tracking-widest uppercase">
+            About
+          </p>
+
+          <h1
+            class="text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.1]"
+          >
+            Hey, I'm <span class="text-primary">Adrian</span>
+          </h1>
+
+          <p
+            class="text-lg md:text-xl text-text/70 font-medium"
+          >
+            {siteConfig.title}
+          </p>
+
+          <div class="flex items-center gap-2 text-sm text-text/50 font-pixel">
+            <MapPinIcon class="w-4 h-4 text-primary" />
+            <span>Based in {siteConfig.location}</span>
+          </div>
+
+          <div class="space-y-4 max-w-prose text-justify text-text/80">
+            <p>
+              I'm a web and software developer passionate about creating
+              unique digital experiences. I specialize in
+              <span class="text-primary font-semibold">Next.js</span> and
+              <span class="text-primary font-semibold">Astro</span>,
+              and I love building things that are both beautiful and functional.
+            </p>
+            <p>
+              I work with the talented team at{" "}
+              <a
+                href="https://devgo.studio"
+                target="_blank"
+                class="text-primary underline underline-offset-4 hover:text-secondary transition-colors"
+              >
+                DEVGO Studio
+              </a>,
+              where we craft custom websites and web applications for clients
+              across industries. No templates, no duplicates — just focused,
+              bespoke work.
+            </p>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3 pt-2">
+            <a
+              href="/projects"
+              class="inline-flex items-center gap-2.5 px-6 py-3 bg-primary/90 backdrop-blur-sm text-white rounded-xl font-semibold hover:bg-secondary transition-all duration-300 group shadow-[0_0_20px_-4px_rgba(99,89,133,0.4)] hover:shadow-[0_0_28px_-2px_rgba(99,89,133,0.6)] hover:-translate-y-0.5"
+            >
+              <span>View My Work</span>
+              <ArrowRightIcon class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+            </a>
+            <a
+              href="/contact"
+              class="inline-flex items-center gap-2.5 px-6 py-3 bg-background/30 backdrop-blur-sm border border-primary/50 text-primary rounded-xl font-semibold hover:bg-primary/15 hover:border-primary hover:text-white transition-all duration-300 group hover:-translate-y-0.5"
+            >
+              <MailIcon class="w-4 h-4" />
+              <span>Get in Touch</span>
+            </a>
+          </div>
+        </div>
+
+        {/* Right: Photo / Avatar */}
+        <div
+          class="flex-shrink-0 about-hero-item"
+          style="opacity: 0;"
+        >
+          <div
+            class="relative w-56 h-56 md:w-72 md:h-72 rounded-2xl overflow-hidden border border-text/10 shadow-[0_0_60px_-12px_rgba(99,89,133,0.35)]"
+          >
+            <img
+              src="/ransauce-icon.png"
+              alt="Adrian Bonpin"
+              class="w-full h-full object-cover"
+            />
+            {/* Decorative corner accents */}
+            <div class="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-primary/40 rounded-tl-lg" />
+            <div class="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-primary/40 rounded-br-lg" />
+          </div>
         </div>
       </div>
     </section>
 
-    {/* Skills */}
-    <section>
-      <SectionHeading title="Skills & Technologies" />
-      <div class="mt-8">
+    {/* ─── STATS STRIP ─── */}
+    <section class="w-full py-10 md:py-12 bg-accent/20 border-y border-text/10">
+      <div class="w-full max-w-7xl mx-auto px-4">
+        <div
+          class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 text-center stats-item"
+          style="opacity: 0;"
+        >
+          <div>
+            <p class="text-5xl md:text-7xl font-bold text-primary leading-none">
+              {yearsOfExperience}+
+            </p>
+            <p class="text-sm text-text/60 mt-3 font-pixel uppercase tracking-wider">
+              Years Experience
+            </p>
+          </div>
+          <div>
+            <p class="text-5xl md:text-7xl font-bold text-primary leading-none">
+              {projects.length}
+            </p>
+            <p class="text-sm text-text/60 mt-3 font-pixel uppercase tracking-wider">
+              Projects
+            </p>
+          </div>
+          <div>
+            <p class="text-5xl md:text-7xl font-bold text-primary leading-none">
+              {clientCount}
+            </p>
+            <p class="text-sm text-text/60 mt-3 font-pixel uppercase tracking-wider">
+              Clients
+            </p>
+          </div>
+          <div>
+            <p class="text-5xl md:text-7xl font-bold text-primary leading-none">
+              {techCount}
+            </p>
+            <p class="text-sm text-text/60 mt-3 font-pixel uppercase tracking-wider">
+              Technologies
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ─── WHAT I DO ─── */}
+    <section class="w-full py-12 md:py-16 border-t border-text/10">
+      <div class="w-full max-w-7xl mx-auto px-4">
+        <div class="mb-8 md:mb-10 services-heading" style="opacity: 0;">
+          <p class="text-xs md:text-sm font-pixel text-primary tracking-widest uppercase mb-3">
+            Capabilities
+          </p>
+          <h2 class="text-4xl md:text-5xl font-bold">What I Do</h2>
+          <p class="mt-4 text-text/70 max-w-xl">
+            From concept to deployment, I handle the full lifecycle of web
+            projects with a focus on quality and performance.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-0">
+          {services.map((service, i) => (
+            <div
+              class="group flex flex-col gap-4 p-6 md:p-8 outline outline-1 -outline-offset-1 outline-text/10 hover:outline-primary/40 hover:bg-accent/10 transition-all duration-300 service-card"
+              data-index={i}
+              style="opacity: 0;"
+            >
+              <div class="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 group-hover:scale-110 transition-all duration-300">
+                <service.icon class="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h3 class="text-xl font-bold group-hover:text-primary transition-colors">
+                  {service.title}
+                </h3>
+                <p class="text-sm text-text/60 mt-2 leading-relaxed">
+                  {service.desc}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* ─── SKILLS ─── */}
+    <section class="w-full py-12 md:py-16 border-t border-text/10">
+      <div class="w-full max-w-7xl mx-auto px-4 mb-8 md:mb-10 skills-heading" style="opacity: 0;">
+        <p class="text-xs md:text-sm font-pixel text-primary tracking-widest uppercase mb-3">
+          Stack
+        </p>
+        <h2 class="text-4xl md:text-5xl font-bold">Skills & Technologies</h2>
+      </div>
+      <div class="skills-body">
         <SkillsGrid />
       </div>
     </section>
 
-    {/* Experience */}
-    <section>
-      <SectionHeading title="Experience" />
-      <div class="mt-8">
+    {/* ─── EXPERIENCE ─── */}
+    <section class="w-full py-12 md:py-16 border-t border-text/10">
+      <div class="w-full max-w-7xl mx-auto px-4 mb-8 md:mb-10 experience-heading" style="opacity: 0;">
+        <p class="text-xs md:text-sm font-pixel text-primary tracking-widest uppercase mb-3">
+          Career
+        </p>
+        <h2 class="text-4xl md:text-5xl font-bold">Experience</h2>
+      </div>
+      <div class="experience-body" style="opacity: 0;">
         <ExperienceTimeline experiences={experiences} />
       </div>
     </section>
 
-    {/* Education */}
+    {/* ─── EDUCATION ─── */}
     {education.length > 0 && (
-      <section>
-        <SectionHeading title="Education" />
-        <div class="w-full max-w-7xl mx-auto px-4 mt-8 space-y-4">
-          {education.map((edu) => (
-            <div class="flex flex-row justify-between items-baseline p-3 border-b border-text/10">
+      <section class="w-full py-12 md:py-16 border-t border-text/10">
+        <div class="w-full max-w-7xl mx-auto px-4 mb-8 md:mb-10 education-heading" style="opacity: 0;">
+          <p class="text-xs md:text-sm font-pixel text-primary tracking-widest uppercase mb-3">
+            Learning
+          </p>
+          <h2 class="text-4xl md:text-5xl font-bold">Education</h2>
+        </div>
+        <div class="w-full max-w-7xl mx-auto px-4 space-y-0 education-body" style="opacity: 0;">
+          {education.map((edu, i) => (
+            <div
+              class:list={[
+                "flex flex-row justify-between items-baseline p-4 md:p-5 border-t border-text/10 hover:bg-accent/5 transition-colors",
+                i === education.length - 1 && "border-b border-text/10",
+              ]}
+            >
               <div>
-                <h4 class="font-semibold">{edu.credential} — {edu.field}</h4>
+                <h4 class="font-semibold text-lg">{edu.credential} — {edu.field}</h4>
                 <p class="text-text/70">{edu.institution}</p>
               </div>
               <span class="text-sm text-text/50 font-pixel">{edu.year}</span>
@@ -72,5 +309,158 @@ import { siteConfig } from "../data/site-config"
         </div>
       </section>
     )}
+
+    {/* ─── BEYOND CODE ─── */}
+    <section class="w-full py-12 md:py-16 border-t border-text/10">
+      <div class="w-full max-w-7xl mx-auto px-4">
+        <div class="mb-8 md:mb-10 interests-heading" style="opacity: 0;">
+          <p class="text-xs md:text-sm font-pixel text-primary tracking-widest uppercase mb-3">
+            Interests
+          </p>
+          <h2 class="text-4xl md:text-5xl font-bold">Beyond Code</h2>
+          <p class="mt-4 text-text/70 max-w-xl">
+            When I'm not shipping features, you'll find me knee-deep in
+            mechanical keyboards or calibrating a 3D printer.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {interests.map((item) => (
+            <div class="group p-6 rounded-xl border border-text/10 bg-text/[0.03] hover:border-primary/30 hover:bg-accent/10 transition-all duration-300 hover:-translate-y-1">
+              <div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center mb-4 group-hover:bg-primary/30 transition-colors">
+                <item.icon class="w-5 h-5 text-primary" />
+              </div>
+              <h3 class="font-semibold text-lg mb-1">{item.title}</h3>
+              <p class="text-sm text-text/60 leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* ─── CTA ─── */}
+    <section class="w-full py-16 md:py-20 border-t border-text/10">
+      <div
+        class="w-full max-w-7xl mx-auto px-4 text-center cta-section"
+        style="opacity: 0;"
+      >
+        <p class="text-xs md:text-sm font-pixel text-primary tracking-widest uppercase mb-4">
+          Let's Build Together
+        </p>
+        <h2 class="text-4xl md:text-6xl font-bold mb-6">
+          Have a project in mind?
+        </h2>
+        <p class="text-lg text-text/70 max-w-xl mx-auto mb-10">
+          I'm always open to discussing new opportunities, creative ideas, or
+          opportunities to be part of your vision.
+        </p>
+        <a
+          href="/contact"
+          class="inline-flex items-center gap-2.5 px-8 py-4 bg-primary/90 backdrop-blur-sm text-white rounded-xl font-semibold hover:bg-secondary transition-all duration-300 group shadow-[0_0_24px_-4px_rgba(99,89,133,0.45)] hover:shadow-[0_0_32px_-2px_rgba(99,89,133,0.6)] hover:-translate-y-0.5 text-lg"
+        >
+          <MailIcon class="w-5 h-5" />
+          <span>Start a Conversation</span>
+          <ArrowRightIcon class="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+        </a>
+      </div>
+    </section>
   </main>
 </Base>
+
+<script>
+  import { createTimeline } from "animejs"
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches
+
+    if (prefersReducedMotion) {
+      document
+        .querySelectorAll(
+          '[style*="opacity: 0"]'
+        )
+        .forEach((el) => {
+          ;(el as HTMLElement).style.opacity = "1"
+          ;(el as HTMLElement).style.transform = ""
+        })
+      return
+    }
+
+    try {
+      const tl = createTimeline({
+        defaults: { ease: "easeOutExpo", duration: 800 },
+      })
+
+      // Hero items
+      tl.add(".about-hero-item", {
+        opacity: [0, 1],
+        translateY: [24, 0],
+        duration: 900,
+        delay: (_el, i) => i * 120,
+      })
+
+      // Stats
+      tl.add(
+        ".stats-item",
+        { opacity: [0, 1], translateY: [16, 0], duration: 700 },
+        "-=400"
+      )
+
+      // Services heading
+      tl.add(
+        ".services-heading",
+        { opacity: [0, 1], translateY: [20, 0], duration: 700 },
+        "-=300"
+      )
+
+      // Service cards
+      tl.add(
+        ".service-card",
+        { opacity: [0, 1], translateY: [16, 0], duration: 600, delay: (_el, i) => i * 80 },
+        "-=400"
+      )
+
+      // Skills heading
+      tl.add(
+        ".skills-heading",
+        { opacity: [0, 1], translateY: [20, 0], duration: 700 },
+        "-=500"
+      )
+
+      // Experience heading
+      tl.add(
+        ".experience-heading",
+        { opacity: [0, 1], translateY: [20, 0], duration: 700 },
+        "-=500"
+      )
+      tl.add(
+        ".experience-body",
+        { opacity: [0, 1], translateY: [16, 0], duration: 700 },
+        "-=400"
+      )
+
+      // Interests heading
+      tl.add(
+        ".interests-heading",
+        { opacity: [0, 1], translateY: [20, 0], duration: 700 },
+        "-=500"
+      )
+
+      // CTA
+      tl.add(
+        ".cta-section",
+        { opacity: [0, 1], translateY: [20, 0], duration: 800 },
+        "-=400"
+      )
+    } catch {
+      // Fallback: show everything
+      document
+        .querySelectorAll('[style*="opacity: 0"]')
+        .forEach((el) => {
+          ;(el as HTMLElement).style.opacity = "1"
+          ;(el as HTMLElement).style.transform = ""
+        })
+    }
+  })
+</script>

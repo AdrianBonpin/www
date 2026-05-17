@@ -1,52 +1,264 @@
 ---
-// src/pages/contact.astro
 import Base from "../layouts/base.astro"
-import SectionHeading from "../components/section-heading.astro"
 import ContactForm from "../components/contact-form.astro"
 import { siteConfig } from "../data/site-config"
-import { MailIcon, GithubIcon, LinkedinIcon } from "@lucide/astro"
+import {
+  MailIcon,
+  GithubIcon,
+  LinkedinIcon,
+  MapPinIcon,
+  ArrowRightIcon,
+  SendIcon,
+  GlobeIcon,
+  ClockIcon,
+} from "@lucide/astro"
+
+const contactLinks = [
+  {
+    icon: MailIcon,
+    label: "Email",
+    value: siteConfig.email,
+    href: `mailto:${siteConfig.email}`,
+    desc: "Best for project inquiries",
+  },
+  {
+    icon: GithubIcon,
+    label: "GitHub",
+    value: "@adrianbonpin",
+    href: siteConfig.socials.github,
+    desc: "Open source & contributions",
+    external: true,
+  },
+  {
+    icon: LinkedinIcon,
+    label: "LinkedIn",
+    value: "Adrian Bonpin",
+    href: siteConfig.socials.linkedin,
+    desc: "Professional network",
+    external: true,
+  },
+]
+
+const infoCards = [
+  {
+    icon: MapPinIcon,
+    title: "Location",
+    desc: siteConfig.location,
+  },
+  {
+    icon: GlobeIcon,
+    title: "Timezone",
+    desc: "GMT+8",
+  },
+  {
+    icon: ClockIcon,
+    title: "Response Time",
+    desc: "Usually within 24h",
+  },
+]
 ---
 
 <Base
   title={`Contact — ${siteConfig.name}`}
   description="Get in touch with Adrian Bonpin — contact form, email, and social links for project inquiries."
 >
-  <main class="pt-20 pb-10 space-y-12">
-    <SectionHeading
-      as="h1"
-      title="Contact"
-      subtitle="Have a project in mind? Let's talk."
-    />
+  <main class="pt-20 pb-10 space-y-0">
+    {/* ─── HERO ─── */}
+    <section class="w-full">
+      <div class="w-full max-w-7xl mx-auto px-4 py-16 md:py-20 flex flex-col md:flex-row gap-12 items-start">
+        <div class="flex-1 space-y-6 contact-hero-item" style="opacity: 0;">
+          <p class="text-xs md:text-sm font-pixel text-primary tracking-widest uppercase">
+            Contact
+          </p>
 
-    <ContactForm />
+          <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.1]">
+            Let's <span class="text-primary">Talk</span>
+          </h1>
 
-    <section class="w-full max-w-2xl mx-auto space-y-4">
-      <h2 class="text-lg font-semibold">Other ways to reach me</h2>
-      <div class="flex flex-col sm:flex-row gap-4">
-        <a
-          href={`mailto:${siteConfig.email}`}
-          class="flex flex-row items-center gap-2 px-4 py-3 rounded-lg border border-text/10 bg-text/5 hover:border-primary/50 hover:-translate-y-0.5 transition-all"
+          <p class="text-lg md:text-xl text-text/70 font-medium">
+            Have a project in mind?
+          </p>
+
+          <div class="space-y-4 max-w-prose text-text/80">
+            <p>
+              I'm always open to discussing new projects, creative ideas, or
+              opportunities to be part of your vision. Whether you need a
+              custom website, a web application, or just want to say hello —
+              reach out.
+            </p>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3 pt-2">
+            <a
+              href={`mailto:${siteConfig.email}`}
+              class="inline-flex items-center gap-2.5 px-6 py-3 bg-primary/90 backdrop-blur-sm text-white rounded-xl font-semibold hover:bg-secondary transition-all duration-300 group shadow-[0_0_20px_-4px_rgba(99,89,133,0.4)] hover:shadow-[0_0_28px_-2px_rgba(99,89,133,0.6)] hover:-translate-y-0.5"
+            >
+              <SendIcon class="w-5 h-5" />
+              <span>Email Me</span>
+            </a>
+            <a
+              href="/resume"
+              class="inline-flex items-center gap-2.5 px-6 py-3 bg-background/30 backdrop-blur-sm border border-primary/50 text-primary rounded-xl font-semibold hover:bg-primary/15 hover:border-primary hover:text-white transition-all duration-300 group hover:-translate-y-0.5"
+            >
+              <span>View Resume</span>
+              <ArrowRightIcon class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+            </a>
+          </div>
+        </div>
+
+        {/* Right side */}
+        <div
+          class="flex-shrink-0 w-full md:w-80 space-y-6 contact-hero-item"
+          style="opacity: 0;"
         >
-          <MailIcon class="w-5 h-5 text-primary" />
-          <span>{siteConfig.email}</span>
-        </a>
+          {/* Contact link cards */}
+          <div class="rounded-2xl border border-text/10 overflow-hidden">
+            {contactLinks.map((link, i) => (
+              <a
+                href={link.href}
+                target={link.external ? "_blank" : undefined}
+                class:list={[
+                  "group flex items-center gap-4 p-4 outline outline-1 -outline-offset-1 outline-text/10",
+                  "hover:bg-accent/10 hover:outline-primary/30 transition-all duration-300",
+                  i === contactLinks.length - 1 ? "" : "border-b border-text/10",
+                ]}
+              >
+                <div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 transition-colors">
+                  <link.icon class="w-5 h-5 text-primary" />
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold text-sm group-hover:text-primary transition-colors">
+                    {link.label}
+                  </p>
+                  <p class="text-xs text-text/50 font-pixel truncate">{link.value}</p>
+                  <p class="text-[10px] text-text/40 font-pixel mt-0.5">{link.desc}</p>
+                </div>
+                <ArrowRightIcon class="w-4 h-4 text-text/30 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300 shrink-0" />
+              </a>
+            ))}
+          </div>
+
+          {/* Info cards */}
+          <div class="grid grid-cols-3 gap-2">
+            {infoCards.map((item) => (
+              <div class="group p-3 rounded-xl border border-text/10 bg-text/[0.03] text-center hover:border-primary/20 transition-all duration-300">
+                <div class="w-8 h-8 mx-auto rounded-lg bg-primary/20 flex items-center justify-center mb-2 group-hover:bg-primary/30 transition-colors">
+                  <item.icon class="w-4 h-4 text-primary" />
+                </div>
+                <p class="text-[10px] font-pixel text-text/40 uppercase tracking-wider mb-0.5">
+                  {item.title}
+                </p>
+                <p class="text-xs text-text/70 font-medium">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ─── FORM ─── */}
+    <section class="w-full py-12 md:py-16 border-t border-text/10">
+      <div class="w-full max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-10">
+        {/* Left: heading */}
+        <div class="lg:w-72 shrink-0 space-y-4 form-heading" style="opacity: 0;">
+          <p class="text-xs md:text-sm font-pixel text-primary tracking-widest uppercase">
+            Send a Message
+          </p>
+          <h2 class="text-3xl md:text-4xl font-bold">
+            Drop me a line
+          </h2>
+          <p class="text-text/70 text-sm leading-relaxed">
+            Fill in the form and I'll get back to you as soon as possible. I'm
+            currently available for freelance work and open to new
+            opportunities.
+          </p>
+        </div>
+
+        {/* Right: form */}
+        <div class="flex-1 max-w-2xl form-body" style="opacity: 0;">
+          <ContactForm />
+        </div>
+      </div>
+    </section>
+
+    {/* ─── CTA ─── */}
+    <section class="w-full py-16 md:py-20 border-t border-text/10">
+      <div
+        class="w-full max-w-7xl mx-auto px-4 text-center cta-section"
+        style="opacity: 0;"
+      >
+        <p class="text-xs md:text-sm font-pixel text-primary tracking-widest uppercase mb-4">
+          Or See My Work
+        </p>
+        <h2 class="text-4xl md:text-5xl font-bold mb-6">
+          Curious what I build?
+        </h2>
         <a
-          href={siteConfig.socials.github}
-          target="_blank"
-          class="flex flex-row items-center gap-2 px-4 py-3 rounded-lg border border-text/10 bg-text/5 hover:border-primary/50 hover:-translate-y-0.5 transition-all"
+          href="/projects"
+          class="inline-flex items-center gap-2.5 px-8 py-4 bg-primary/90 backdrop-blur-sm text-white rounded-xl font-semibold hover:bg-secondary transition-all duration-300 group shadow-[0_0_24px_-4px_rgba(99,89,133,0.45)] hover:shadow-[0_0_32px_-2px_rgba(99,89,133,0.6)] hover:-translate-y-0.5 text-lg"
         >
-          <GithubIcon class="w-5 h-5 text-primary" />
-          <span>GitHub</span>
-        </a>
-        <a
-          href={siteConfig.socials.linkedin}
-          target="_blank"
-          class="flex flex-row items-center gap-2 px-4 py-3 rounded-lg border border-text/10 bg-text/5 hover:border-primary/50 hover:-translate-y-0.5 transition-all"
-        >
-          <LinkedinIcon class="w-5 h-5 text-primary" />
-          <span>LinkedIn</span>
+          <GlobeIcon class="w-5 h-5" />
+          <span>Browse Portfolio</span>
+          <ArrowRightIcon class="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
         </a>
       </div>
     </section>
   </main>
+
+  <script>
+    import { createTimeline } from "animejs"
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches
+
+      if (prefersReducedMotion) {
+        document
+          .querySelectorAll('[style*="opacity: 0"]')
+          .forEach((el) => {
+            ;(el as HTMLElement).style.opacity = "1"
+            ;(el as HTMLElement).style.transform = ""
+          })
+        return
+      }
+
+      try {
+        const tl = createTimeline({
+          defaults: { ease: "easeOutExpo", duration: 800 },
+        })
+
+        tl.add(".contact-hero-item", {
+          opacity: [0, 1],
+          translateY: [24, 0],
+          duration: 900,
+          delay: (_el, i) => i * 120,
+        })
+
+        tl.add(
+          ".form-heading",
+          { opacity: [0, 1], translateY: [20, 0], duration: 700 },
+          "-=500"
+        )
+        tl.add(
+          ".form-body",
+          { opacity: [0, 1], translateY: [16, 0], duration: 700 },
+          "-=400"
+        )
+
+        tl.add(
+          ".cta-section",
+          { opacity: [0, 1], translateY: [20, 0], duration: 800 },
+          "-=400"
+        )
+      } catch {
+        document
+          .querySelectorAll('[style*="opacity: 0"]')
+          .forEach((el) => {
+            ;(el as HTMLElement).style.opacity = "1"
+            ;(el as HTMLElement).style.transform = ""
+          })
+      }
+    })
+  </script>
 </Base>

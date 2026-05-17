@@ -1,50 +1,256 @@
 ---
-// src/pages/resume.astro
 import Base from "../layouts/base.astro"
-import SectionHeading from "../components/section-heading.astro"
-import ResumeDownload from "../components/resume-download.astro"
 import ExperienceTimeline from "../components/experience-timeline.astro"
 import SkillsCompact from "../components/skills-compact.astro"
 import { experiences } from "../data/experience"
 import { education } from "../data/education"
+import { projects } from "../data/projects"
+import { skillCategories } from "../data/skills"
 import { siteConfig } from "../data/site-config"
+import {
+  DownloadIcon,
+  BriefcaseIcon,
+  BookOpenIcon,
+  ArrowRightIcon,
+  MapPinIcon,
+  MailIcon,
+  GlobeIcon,
+  Code2Icon,
+  GraduationCapIcon,
+  FileTextIcon,
+} from "@lucide/astro"
+
+const currentYear = new Date().getFullYear()
+const firstProjectYear = Math.min(...projects.map((p) => p.year))
+const yearsOfExperience = currentYear - firstProjectYear
+const clientCount = projects.filter((p) => p.type === "client").length
+const techCount = skillCategories.reduce(
+  (acc, cat) => acc + cat.items.length,
+  0
+)
+
+const quickLinks = [
+  {
+    icon: GlobeIcon,
+    label: "Portfolio",
+    href: "/projects",
+    desc: "See my work",
+  },
+  {
+    icon: Code2Icon,
+    label: "About",
+    href: "/about",
+    desc: "Full bio & skills",
+  },
+  {
+    icon: MailIcon,
+    label: "Contact",
+    href: "/contact",
+    desc: "Get in touch",
+  },
+]
 ---
 
 <Base
   title={`Resume — ${siteConfig.name}`}
   description="Adrian Bonpin's resume — full-stack developer skills, work experience, education. Downloadable PDF."
 >
-  <main class="pt-20 pb-10 space-y-12">
-    <section>
-      <SectionHeading as="h1" title="Resume" subtitle="Download or view inline" />
-      <div class="mt-6">
-        <ResumeDownload />
+  <main class="pt-20 pb-10 space-y-0">
+    {/* ─── HERO ─── */}
+    <section class="w-full">
+      <div class="w-full max-w-7xl mx-auto px-4 py-16 md:py-20 flex flex-col md:flex-row gap-12 items-start">
+        {/* Left */}
+        <div class="flex-1 space-y-6 resume-hero-item" style="opacity: 0;">
+          <p class="text-xs md:text-sm font-pixel text-primary tracking-widest uppercase">
+            Resume
+          </p>
+
+          <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.1]">
+            Adrian <span class="text-primary">Bonpin</span>
+          </h1>
+
+          <p
+            class="text-lg md:text-xl text-text/70 font-medium"
+          >
+            {siteConfig.title}
+          </p>
+
+          <div class="flex items-center gap-2 text-sm text-text/50 font-pixel">
+            <MapPinIcon class="w-4 h-4 text-primary" />
+            <span>{siteConfig.location}</span>
+            <span class="text-text/20">·</span>
+            <MailIcon class="w-4 h-4 text-primary" />
+            <a
+              href={`mailto:${siteConfig.email}`}
+              class="hover:text-primary transition-colors">
+              {siteConfig.email}
+            </a>
+          </div>
+
+          <p class="max-w-prose text-justify text-text/80 leading-relaxed">
+            I build custom, performant web applications for clients and personal
+            projects alike. With a focus on clean architecture and modern
+            tooling, I deliver products that look great and feel effortless to
+            use.
+          </p>
+
+          <div class="flex flex-col sm:flex-row gap-3 pt-2">
+            <a
+              href="/resume.pdf"
+              download
+              class="inline-flex items-center gap-2.5 px-6 py-3 bg-primary/90 backdrop-blur-sm text-white rounded-xl font-semibold hover:bg-secondary transition-all duration-300 group shadow-[0_0_20px_-4px_rgba(99,89,133,0.4)] hover:shadow-[0_0_28px_-2px_rgba(99,89,133,0.6)] hover:-translate-y-0.5"
+            >
+              <DownloadIcon class="w-5 h-5" />
+              <span>Download PDF</span>
+            </a>
+            <a
+              href="/contact"
+              class="inline-flex items-center gap-2.5 px-6 py-3 bg-background/30 backdrop-blur-sm border border-primary/50 text-primary rounded-xl font-semibold hover:bg-primary/15 hover:border-primary hover:text-white transition-all duration-300 group hover:-translate-y-0.5"
+            >
+              <MailIcon class="w-4 h-4" />
+              <span>Contact Me</span>
+            </a>
+          </div>
+        </div>
+
+        {/* Right: Quick links */}
+        <div
+          class="flex-shrink-0 w-full md:w-72 space-y-0 resume-hero-item"
+          style="opacity: 0;"
+        >
+          <div class="rounded-2xl border border-text/10 overflow-hidden">
+            {quickLinks.map((link, i) => (
+              <a
+                href={link.href}
+                class:list={[
+                  "group flex items-center gap-4 p-4 outline outline-1 -outline-offset-1 outline-text/10",
+                  "hover:bg-accent/10 hover:outline-primary/30 transition-all duration-300",
+                  i === quickLinks.length - 1 ? "" : "border-b border-text/10",
+                ]}
+              >
+                <div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 transition-colors">
+                  <link.icon class="w-5 h-5 text-primary" />
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold group-hover:text-primary transition-colors truncate">
+                    {link.label}
+                  </p>
+                  <p class="text-xs text-text/50 font-pixel">{link.desc}</p>
+                </div>
+                <ArrowRightIcon class="w-4 h-4 text-text/30 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300 shrink-0" />
+              </a>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
 
-    <section>
-      <SectionHeading title="Experience" />
-      <div class="mt-6">
+    {/* ─── STATS ─── */}
+    <section class="w-full py-10 md:py-12 bg-accent/20 border-y border-text/10">
+      <div class="w-full max-w-7xl mx-auto px-4">
+        <div
+          class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 text-center stats-item"
+          style="opacity: 0;"
+        >
+          <div>
+            <p class="text-5xl md:text-7xl font-bold text-primary leading-none">
+              {yearsOfExperience}+
+            </p>
+            <p class="text-sm text-text/60 mt-3 font-pixel uppercase tracking-wider">
+              Years
+            </p>
+          </div>
+          <div>
+            <p class="text-5xl md:text-7xl font-bold text-primary leading-none">
+              {projects.length}
+            </p>
+            <p class="text-sm text-text/60 mt-3 font-pixel uppercase tracking-wider">
+              Projects
+            </p>
+          </div>
+          <div>
+            <p class="text-5xl md:text-7xl font-bold text-primary leading-none">
+              {clientCount}
+            </p>
+            <p class="text-sm text-text/60 mt-3 font-pixel uppercase tracking-wider">
+              Clients
+            </p>
+          </div>
+          <div>
+            <p class="text-5xl md:text-7xl font-bold text-primary leading-none">
+              {techCount}
+            </p>
+            <p class="text-sm text-text/60 mt-3 font-pixel uppercase tracking-wider">
+              Technologies
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ─── EXPERIENCE ─── */}
+    <section class="w-full py-12 md:py-16 border-t border-text/10">
+      <div class="w-full max-w-7xl mx-auto px-4 mb-8 md:mb-10 exp-heading" style="opacity: 0;">
+        <div class="flex items-baseline gap-3">
+          <BriefcaseIcon class="w-5 h-5 md:w-6 md:h-6 text-primary" />
+          <p class="text-xs md:text-sm font-pixel text-primary tracking-widest uppercase">
+            Career
+          </p>
+        </div>
+        <h2 class="text-4xl md:text-5xl font-bold mt-3">Experience</h2>
+      </div>
+
+      <div class="exp-body" style="opacity: 0;">
         <ExperienceTimeline experiences={experiences} compact={true} />
       </div>
     </section>
 
-    <section>
-      <SectionHeading title="Skills" />
-      <div class="mt-6">
+    {/* ─── SKILLS ─── */}
+    <section class="w-full py-12 md:py-16 border-t border-text/10">
+      <div class="w-full max-w-7xl mx-auto px-4 mb-8 md:mb-10 skills-heading" style="opacity: 0;">
+        <div class="flex items-baseline gap-3">
+          <Code2Icon class="w-5 h-5 md:w-6 md:h-6 text-primary" />
+          <p class="text-xs md:text-sm font-pixel text-primary tracking-widest uppercase">
+            Stack
+          </p>
+        </div>
+        <h2 class="text-4xl md:text-5xl font-bold mt-3">Skills</h2>
+      </div>
+
+      <div class="skills-body" style="opacity: 0;">
         <SkillsCompact />
       </div>
     </section>
 
+    {/* ─── EDUCATION ─── */}
     {education.length > 0 && (
-      <section>
-        <SectionHeading title="Education" />
-        <div class="w-full max-w-7xl mx-auto px-4 mt-6 space-y-3">
-          {education.map((edu) => (
-            <div class="flex flex-row justify-between items-baseline py-2 border-b border-text/10">
+      <section class="w-full py-12 md:py-16 border-t border-text/10">
+        <div class="w-full max-w-7xl mx-auto px-4 mb-8 md:mb-10 edu-heading" style="opacity: 0;">
+          <div class="flex items-baseline gap-3">
+            <GraduationCapIcon class="w-5 h-5 md:w-6 md:h-6 text-primary" />
+            <p class="text-xs md:text-sm font-pixel text-primary tracking-widest uppercase">
+              Learning
+            </p>
+          </div>
+          <h2 class="text-4xl md:text-5xl font-bold mt-3">Education</h2>
+        </div>
+
+        <div class="w-full max-w-7xl mx-auto px-4 space-y-0 edu-body" style="opacity: 0;">
+          {education.map((edu, i) => (
+            <div
+              class:list={[
+                "flex flex-row justify-between items-baseline p-4 md:p-5 border-t border-text/10 hover:bg-accent/5 transition-colors",
+                i === education.length - 1 && "border-b border-text/10",
+              ]}
+            >
               <div>
-                <span class="font-semibold">{edu.credential}</span>
-                <span class="text-text/70"> — {edu.institution}</span>
+                <h4 class="font-semibold text-lg">
+                  {edu.credential} — {edu.field}
+                </h4>
+                <p class="text-text/70">{edu.institution}</p>
+                {edu.desc && (
+                  <p class="text-text/60 text-sm mt-1">{edu.desc}</p>
+                )}
               </div>
               <span class="text-sm text-text/50 font-pixel">{edu.year}</span>
             </div>
@@ -52,5 +258,122 @@ import { siteConfig } from "../data/site-config"
         </div>
       </section>
     )}
+
+    {/* ─── CTA ─── */}
+    <section class="w-full py-16 md:py-20 border-t border-text/10">
+      <div
+        class="w-full max-w-7xl mx-auto px-4 text-center cta-section"
+        style="opacity: 0;"
+      >
+        <p class="text-xs md:text-sm font-pixel text-primary tracking-widest uppercase mb-4">
+          Next Steps
+        </p>
+        <h2 class="text-4xl md:text-5xl font-bold mb-6">
+          Want to know more?
+        </h2>
+        <div class="flex flex-col sm:flex-row gap-3 justify-center mt-8">
+          <a
+            href="/about"
+            class="inline-flex items-center gap-2.5 px-6 py-3 bg-primary/90 backdrop-blur-sm text-white rounded-xl font-semibold hover:bg-secondary transition-all duration-300 group shadow-[0_0_20px_-4px_rgba(99,89,133,0.4)] hover:shadow-[0_0_28px_-2px_rgba(99,89,133,0.6)] hover:-translate-y-0.5"
+          >
+            <FileTextIcon class="w-5 h-5" />
+            <span>View Full About</span>
+            <ArrowRightIcon class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+          </a>
+          <a
+            href="/contact"
+            class="inline-flex items-center gap-2.5 px-6 py-3 bg-background/30 backdrop-blur-sm border border-primary/50 text-primary rounded-xl font-semibold hover:bg-primary/15 hover:border-primary hover:text-white transition-all duration-300 group hover:-translate-y-0.5"
+          >
+            <MailIcon class="w-4 h-4" />
+            <span>Get in Touch</span>
+          </a>
+        </div>
+      </div>
+    </section>
   </main>
+
+  <script>
+    import { createTimeline } from "animejs"
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches
+
+      if (prefersReducedMotion) {
+        document
+          .querySelectorAll('[style*="opacity: 0"]')
+          .forEach((el) => {
+            ;(el as HTMLElement).style.opacity = "1"
+            ;(el as HTMLElement).style.transform = ""
+          })
+        return
+      }
+
+      try {
+        const tl = createTimeline({
+          defaults: { ease: "easeOutExpo", duration: 800 },
+        })
+
+        tl.add(".resume-hero-item", {
+          opacity: [0, 1],
+          translateY: [24, 0],
+          duration: 900,
+          delay: (_el, i) => i * 120,
+        })
+
+        tl.add(
+          ".stats-item",
+          { opacity: [0, 1], translateY: [16, 0], duration: 700 },
+          "-=400"
+        )
+
+        tl.add(
+          ".exp-heading",
+          { opacity: [0, 1], translateY: [20, 0], duration: 700 },
+          "-=500"
+        )
+        tl.add(
+          ".exp-body",
+          { opacity: [0, 1], translateY: [16, 0], duration: 700 },
+          "-=400"
+        )
+
+        tl.add(
+          ".skills-heading",
+          { opacity: [0, 1], translateY: [20, 0], duration: 700 },
+          "-=500"
+        )
+        tl.add(
+          ".skills-body",
+          { opacity: [0, 1], translateY: [16, 0], duration: 700 },
+          "-=400"
+        )
+
+        tl.add(
+          ".edu-heading",
+          { opacity: [0, 1], translateY: [20, 0], duration: 700 },
+          "-=500"
+        )
+        tl.add(
+          ".edu-body",
+          { opacity: [0, 1], translateY: [16, 0], duration: 700 },
+          "-=400"
+        )
+
+        tl.add(
+          ".cta-section",
+          { opacity: [0, 1], translateY: [20, 0], duration: 800 },
+          "-=400"
+        )
+      } catch {
+        document
+          .querySelectorAll('[style*="opacity: 0"]')
+          .forEach((el) => {
+            ;(el as HTMLElement).style.opacity = "1"
+            ;(el as HTMLElement).style.transform = ""
+          })
+      }
+    })
+  </script>
 </Base>
