@@ -263,4 +263,23 @@ const infoCards = [
       }
     })
   </script>
+  <!-- ContactPage JSON-LD -->
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "ContactPage",
+      "url": Astro.url.href,
+      "description": "Get in touch with Adrian Bonpin — contact form, email, and social links for project inquiries.",
+      "mainEntity": {
+        "@type": "Person",
+        "name": siteConfig.name,
+        "email": siteConfig.email,
+        "sameAs": [
+          siteConfig.socials.github,
+          siteConfig.socials.linkedin,
+        ],
+      },
+    })}
+  />
 </Base>
