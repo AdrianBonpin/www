@@ -1,5 +1,6 @@
 ---
-export const sections = ["projects", "about"]
+// src/components/navbar.astro
+import { siteConfig } from "../data/site-config"
 ---
 
 <nav
@@ -10,32 +11,22 @@ export const sections = ["projects", "about"]
     >
         <a
             title='Home'
-            href='#top'
+            href='/'
             class='font-pixel text-3xl font-bold hover:bg-text hover:text-background px-2 transition-colors'
             >ab</a
         >
         <div class='flex flex-row gap-8'>
             {
-                sections.map((part, idx) => (
+                siteConfig.navItems.map((item) => (
                     <a
-                        href={`#${part}`}
-                        title={`go to ${part}`}
+                        href={item.href}
                         class={`font-pixel text-xl relative group`}
                     >
-                        {part}
+                        {item.label}
                         <div class='absolute bottom-px left-0 right-0 group-hover:bg-secondary bg-transparent h-px transition-colors' />
                     </a>
                 ))
             }
-            <a
-                href='mailto:adrianbonpin@gmail.com?subject=Website%20Enquiry&body=Hello%20Adrian,'
-                title='contact me'
-                class='font-pixel text-xl relative group'
-                >contact<div
-                    class='absolute bottom-px left-0 right-0 group-hover:bg-secondary bg-transparent h-px transition-colors'
-                >
-                </div></a
-            >
         </div>
     </div>
 </nav>
