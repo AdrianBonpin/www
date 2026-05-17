@@ -1,0 +1,131 @@
+---
+// src/components/project-filter.astro
+import type { Project } from "../data/projects"
+
+export interface Props {
+  projects: Project[]
+}
+
+const { projects } = Astro.props
+
+// Derive unique values for filter options
+const frameworks = [...new Set(projects.map((p) => p.framework))].sort()
+const years = [...new Set(projects.map((p) => p.year))].sort().reverse()
+---
+
+<div id="project-filters" class="w-full max-w-7xl mx-auto px-4 flex flex-wrap gap-3 items-center">
+  {/* Type filter */}
+  <select
+    id="filter-type"
+    class="bg-accent text-text px-3 py-2 rounded-lg border border-text/10 font-pixel text-sm cursor-pointer hover:border-primary/50 transition-colors"
+    aria-label="Filter by project type"
+  >
+    <option value="all">All Types</option>
+    <option value="client">Client</option>
+    <option value="personal">Personal</option>
+  </select>
+
+  {/* Framework filter */}
+  <select
+    id="filter-framework"
+    class="bg-accent text-text px-3 py-2 rounded-lg border border-text/10 font-pixel text-sm cursor-pointer hover:border-primary/50 transition-colors"
+    aria-label="Filter by framework"
+  >
+    <option value="all">All Frameworks</option>
+    {frameworks.map((fw) => (
+      <option value={fw}>{fw}</option>
+    ))}
+  </select>
+
+  {/* Year filter */}
+  <select
+    id="filter-year"
+    class="bg-accent text-text px-3 py-2 rounded-lg border border-text/10 font-pixel text-sm cursor-pointer hover:border-primary/50 transition-colors"
+    aria-label="Filter by year"
+  >
+    <option value="all">All Years</option>
+    {years.map((y) => (
+      <option value={y}>{y}</option>
+    ))}
+  </select>
+
+  <button
+    id="filter-clear"
+    class="text-sm font-pixel text-text/50 hover:text-primary transition-colors underline underline-offset-2"
+  >
+    Clear Filters
+  </button>
+</div>
+
+<script>
+  // Client-side filtering logic
+  function applyFilters() {
+    const typeEl = document.getElementById("filter-type") as HTMLSelectElement | null
+    const frameworkEl = document.getElementById("filter-framework") as HTMLSelectElement | null
+    const yearEl = document.getElementById("filter-year") as HTMLSelectElement | null
+
+    const type = typeEl?.value ?? "all"
+    const framework = frameworkEl?.value ?? "all"
+    const year = yearEl?.value ?? "all"
+
+    // Update URL params
+    const params = new URLSearchParams()
+    if (type !== "all") params.set("type", type)
+    if (framework !== "all") params.set("framework", framework)
+    if (year !== "all") params.set("year", year)
+    const newUrl = params.toString()
+      ? `${window.location.pathname}?${params.toString()}`
+      : window.location.pathname
+    window.history.replaceState({}, "", newUrl)
+
+    // Filter visible cards
+    const cards = document.querySelectorAll<HTMLElement>("[data-project-card]")
+    cards.forEach((card) => {
+      const cardType = card.dataset.type
+      const cardFramework = card.dataset.framework
+      const cardYear = card.dataset.year
+
+      const typeMatch = type === "all" || cardType === type
+      const frameworkMatch = framework === "all" || cardFramework === framework
+      const yearMatch = year === "all" || cardYear === year
+
+      card.style.display = typeMatch && frameworkMatch && yearMatch ? "" : "none"
+    })
+  }
+
+  // Read initial state from URL params
+  function initFromURL() {
+    const params = new URLSearchParams(window.location.search)
+    const type = params.get("type")
+    const framework = params.get("framework")
+    const year = params.get("year")
+
+    const typeEl = document.getElementById("filter-type") as HTMLSelectElement | null
+    const frameworkEl = document.getElementById("filter-framework") as HTMLSelectElement | null
+    const yearEl = document.getElementById("filter-year") as HTMLSelectElement | null
+
+    if (typeEl && type) typeEl.value = type
+    if (frameworkEl && framework) frameworkEl.value = framework
+    if (yearEl && year) yearEl.value = year
+
+    applyFilters()
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    initFromURL()
+
+    document.getElementById("filter-type")?.addEventListener("change", applyFilters)
+    document.getElementById("filter-framework")?.addEventListener("change", applyFilters)
+    document.getElementById("filter-year")?.addEventListener("change", applyFilters)
+
+    document.getElementById("filter-clear")?.addEventListener("click", () => {
+      const typeEl = document.getElementById("filter-type") as HTMLSelectElement | null
+      const frameworkEl = document.getElementById("filter-framework") as HTMLSelectElement | null
+      const yearEl = document.getElementById("filter-year") as HTMLSelectElement | null
+      if (typeEl) typeEl.value = "all"
+      if (frameworkEl) frameworkEl.value = "all"
+      if (yearEl) yearEl.value = "all"
+      applyFilters()
+    })
+  })
+</script>
