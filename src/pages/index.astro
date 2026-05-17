@@ -1,168 +1,175 @@
 ---
-import HeroRain from "../components/hero-rain.astro"
-import Projects from "../components/projects.astro"
-import SideProjects from "../components/side-projects.astro"
+// src/pages/index.astro
 import Base from "../layouts/base.astro"
+import HeroRain from "../components/hero-rain.astro"
+import SectionHeading from "../components/section-heading.astro"
+import ProjectCard from "../components/project-card.astro"
+import SkillsCompact from "../components/skills-compact.astro"
+import { projects } from "../data/projects"
+import { siteConfig } from "../data/site-config"
+import { ArrowRightIcon } from "@lucide/astro"
+
+// Pick 4 featured projects (prioritize recent and diverse)
+const featuredProjects = projects
+  .sort((a, b) => b.year - a.year)
+  .slice(0, 4)
 ---
 
 <Base>
-    <section
-        id='top'
-        class='w-full min-h-dvh flex flex-col justify-center pt-14 select-none relative'
+  {/* Hero Section */}
+  <section
+    id="top"
+    class="w-full min-h-dvh flex flex-col justify-center pt-14 select-none relative"
+  >
+    <h1 class="w-full flex flex-row md:justify-end max-w-7xl mx-auto text-4xl py-10 px-4 absolute top-10 left-1/2 -translate-x-1/2 opacity-0">
+      <div class="bg-background p-2 rounded-lg z-1">
+        {siteConfig.title}<br />
+        <span class="text-2xl md:text-3xl font-normal text-text/60">Building Dreams. One Line at a Time.</span>
+      </div>
+    </h1>
+    <HeroRain />
+    <div
+      id="scroll-hint"
+      class="w-full max-w-7xl mx-auto text-xl px-4 text-center font-pixel py-4 text-text/70 opacity-0"
     >
-        <h1
-            class='w-full flex flex-row md:justify-end max-w-7xl mx-auto text-4xl py-10 px-4 absolute top-10 left-1/2 -translate-x-1/2 opacity-0'
-        >
-            <div class="bg-background p-2 rounded-lg z-1">Building Dreams.<br />One Line at a Time.</div>
-        </h1>
-        <HeroRain />
-        <div
-            id='scroll-hint'
-            class='w-full max-w-7xl mx-auto text-xl px-4 text-center font-pixel py-4 text-text/70 opacity-0'
-        >
-            v Scroll Down v
+      v Scroll Down v
+    </div>
+  </section>
+
+  {/* CTA Row */}
+  <section class="w-full max-w-7xl mx-auto px-4 py-10">
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a
+        href="/projects"
+        class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-secondary transition-colors group"
+      >
+        View My Work
+        <ArrowRightIcon class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+      </a>
+      <a
+        href="/resume"
+        class="inline-flex items-center gap-2 px-6 py-3 border border-primary text-primary rounded-lg font-semibold hover:bg-primary hover:text-white transition-colors group"
+      >
+        See My Resume
+        <ArrowRightIcon class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+      </a>
+    </div>
+  </section>
+
+  {/* Featured Projects */}
+  <section class="w-full py-10">
+    <SectionHeading
+      title="Featured Projects"
+      subtitle="Recent client work and personal projects"
+    />
+    <div class="w-full max-w-7xl mx-auto px-4 mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {featuredProjects.map((project) => (
+        <ProjectCard project={project} />
+      ))}
+    </div>
+    <div class="w-full max-w-7xl mx-auto px-4 mt-6 text-center">
+      <a
+        href="/projects"
+        class="inline-flex items-center gap-1 text-primary hover:underline font-pixel text-sm"
+      >
+        View All Projects →
+      </a>
+    </div>
+  </section>
+
+  {/* Skills at a Glance */}
+  <section class="w-full py-10 border-t border-text/10">
+    <SectionHeading
+      title="Skills at a Glance"
+    />
+    <div class="mt-6">
+      <SkillsCompact />
+    </div>
+    <div class="w-full max-w-7xl mx-auto px-4 mt-4 text-center">
+      <a
+        href="/about"
+        class="inline-flex items-center gap-1 text-primary hover:underline font-pixel text-sm"
+      >
+        Full Skills Breakdown →
+      </a>
+    </div>
+  </section>
+
+  {/* Trust Signals */}
+  <section class="w-full py-10 border-t border-text/10">
+    <div class="w-full max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+        <div>
+          <p class="text-3xl md:text-4xl font-bold text-primary">{projects.length}+</p>
+          <p class="text-sm text-text/60 mt-1">Projects Delivered</p>
         </div>
-    </section>
-    <section
-        id='projects'
-        class='w-full flex flex-col items-center min-h-max'
-    >
-        <h2 class='w-full max-w-7xl text-2xl md:text-4xl px-4 mx-auto mt-10'>
-            Elevate your online presence<br />with a <span
-                class='font-serif italic text-primary'>custom</span
-            > website. Built for <span class='font-serif italic text-primary'
-                >You</span
-            >.
-        </h2>
-        <p
-            class='w-full text-xl md:text-3xl text-center py-4 my-8 italic font-serif border-y border-text'
-        >
-            No Templates. No Duplicates. Just You.
-        </p>
-        <h3 class='w-full max-w-7xl text-2xl md:text-4xl px-4 mx-auto'>
-            Previous Projects
-        </h3>
-        <Projects />
-    </section>
-    <section
-        id='about'
-        class='w-full flex flex-col items-center min-h-max'
-    >
-        <h3 class='w-full max-w-7xl text-2xl md:text-4xl px-4 mx-auto mt-10'>
-            About Me
-        </h3>
-        <h4
-            class='w-full max-w-7xl text-xl md:text-2xl px-4 mx-auto mt-4 font-semibold text-justify'
-        >
-            Hello! I'm Adrian<span class='text-lg md:text-xl font-normal'
-                >, a web and software developer with a passion for creating
-                unique and innovative solutions.</span
-            >
-        </h4>
-        <p
-            class='w-full max-w-7xl px-4 text-lg mt-4 [&_span]:text-primary [&_span]:italic [&_span]:underline text-justify'
-        >
-            I specialize in digital experiences with <span>Next.js</span> and <span
-                >Astro</span
-            >, and love making random things! I also work with the talented team
-            at <a
-                href='https://devgo.studio'
-                class='underline text-primary'
-                target='_blank'
-                >DEVGO Studio</a
-            >, ready for new projects.
-        </p>
-    </section>
-    <section
-        id='side-projects'
-        class='w-full flex flex-col items-center min-h-max'
-    >
-        <h3 class='w-full max-w-7xl text-2xl md:text-4xl px-4 mx-auto mt-10'>
-            Side Projects
-        </h3>
-        <p class='w-full max-w-7xl px-4 mx-auto mt-2 text-text/70 italic'>
-            Personal experiments and passion projects
-        </p>
-        <SideProjects />
-    </section>
+        <div>
+          <p class="text-3xl md:text-4xl font-bold text-primary">2+</p>
+          <p class="text-sm text-text/60 mt-1">Years Experience</p>
+        </div>
+        <div>
+          <p class="text-3xl md:text-4xl font-bold text-primary">
+            {projects.filter((p) => p.type === "client").length}
+          </p>
+          <p class="text-sm text-text/60 mt-1">Happy Clients</p>
+        </div>
+        <div>
+          <p class="text-3xl md:text-4xl font-bold text-primary">100%</p>
+          <p class="text-sm text-text/60 mt-1">Custom Code</p>
+        </div>
+      </div>
+    </div>
+  </section>
 </Base>
 
 <script>
-    import { createTimeline } from 'animejs'
+  import { createTimeline } from "animejs"
 
-    const targets = [
-        'nav',
-        '#top h1',
-        '#ascii-container',
-        '#scroll-hint',
-    ]
+  const targets = ["nav", "#top h1", "#ascii-container", "#scroll-hint"]
 
-    function showAll() {
-        targets.forEach(selector => {
-            const el = document.querySelector(selector) as HTMLElement | null
-            if (el) {
-                el.style.opacity = '1'
-                el.style.transform = ''
-            }
-        })
+  function showAll() {
+    targets.forEach((selector) => {
+      const el = document.querySelector(selector) as HTMLElement | null
+      if (el) {
+        el.style.opacity = "1"
+        el.style.transform = ""
+      }
+    })
+  }
+
+  targets.forEach((selector) => {
+    const el = document.querySelector(selector) as HTMLElement | null
+    if (el) {
+      el.style.opacity = "0"
+      el.style.transform = "translateY(12px)"
+    }
+  })
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    if (prefersReducedMotion) {
+      showAll()
+      return
     }
 
-    targets.forEach(selector => {
-        const el = document.querySelector(selector) as HTMLElement | null
-        if (el) {
-            el.style.opacity = '0'
-            el.style.transform = 'translateY(12px)'
-        }
-    })
+    try {
+      const tl = createTimeline({
+        defaults: { ease: "easeOutExpo", duration: 900 },
+        onComplete: () => {
+          const el = document.querySelector("#ascii-container") as HTMLElement | null
+          if (el) {
+            el.style.willChange = "auto"
+            el.style.transform = ""
+          }
+        },
+      })
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-        if (prefersReducedMotion) {
-            showAll()
-            return
-        }
-
-        try {
-            const tl = createTimeline({
-                defaults: {
-                    ease: 'easeOutExpo',
-                    duration: 900,
-                },
-                onComplete: () => {
-                    const el = document.querySelector('#ascii-container') as HTMLElement | null
-                    if (el) {
-                        el.style.willChange = 'auto'
-                        el.style.transform = ''
-                    }
-                }
-            })
-
-            tl.add('nav', {
-                opacity: [0, 1],
-                translateY: [-8, 0],
-                duration: 600,
-            })
-
-            tl.add('#top h1', {
-                opacity: [0, 1],
-                translateY: [20, 0],
-                duration: 900,
-            }, '-=200')
-
-            tl.add('#ascii-container', {
-                opacity: [0, 1],
-                translateY: [16, 0],
-                duration: 1000,
-            }, '-=400')
-
-            tl.add('#scroll-hint', {
-                opacity: [0, 1],
-                translateY: [8, 0],
-                duration: 700,
-            }, '-=200')
-        } catch {
-            showAll()
-        }
-    })
+      tl.add("nav", { opacity: [0, 1], translateY: [-8, 0], duration: 600 })
+      tl.add("#top h1", { opacity: [0, 1], translateY: [20, 0], duration: 900 }, "-=200")
+      tl.add("#ascii-container", { opacity: [0, 1], translateY: [16, 0], duration: 1000 }, "-=400")
+      tl.add("#scroll-hint", { opacity: [0, 1], translateY: [8, 0], duration: 700 }, "-=200")
+    } catch {
+      showAll()
+    }
+  })
 </script>
