@@ -1,0 +1,63 @@
+---
+// src/pages/projects.astro
+import Base from "../layouts/base.astro"
+import SectionHeading from "../components/section-heading.astro"
+import ProjectCard from "../components/project-card.astro"
+import ProjectFilter from "../components/project-filter.astro"
+import { projects } from "../data/projects"
+import { siteConfig } from "../data/site-config"
+---
+
+<Base
+  title={`Projects — ${siteConfig.name}`}
+  description="Portfolio of web development projects by Adrian Bonpin — client work and personal projects built with Next.js, Astro, and more."
+>
+  <main class="pt-20 pb-10 space-y-8">
+    <SectionHeading
+      as="h1"
+      title="Projects"
+      subtitle="Client work and personal projects. Filter by type, framework, or year."
+    />
+
+    <ProjectFilter projects={projects} />
+
+    <div class="w-full max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {projects.map((project) => (
+        <div
+          data-project-card
+          data-type={project.type}
+          data-framework={project.framework}
+          data-year={String(project.year)}
+        >
+          <ProjectCard project={project} />
+        </div>
+      ))}
+    </div>
+
+    <div
+      id="no-results"
+      class="w-full max-w-7xl mx-auto px-4 text-center py-10 text-text/50 hidden"
+    >
+      <p class="text-lg font-pixel">No projects match your filters.</p>
+    </div>
+  </main>
+</Base>
+
+<script>
+  // Show/hide "no results" message based on visible cards
+  function updateNoResults() {
+    const cards = document.querySelectorAll<HTMLElement>("[data-project-card]")
+    const visible = Array.from(cards).filter((c) => c.style.display !== "none")
+    const msg = document.getElementById("no-results")
+    if (msg) {
+      msg.classList.toggle("hidden", visible.length > 0 || cards.length === 0)
+    }
+  }
+
+  // Patch the filter apply to also update no-results message
+  const observer = new MutationObserver(() => updateNoResults())
+  document.querySelectorAll<HTMLElement>("[data-project-card]").forEach((card) => {
+    observer.observe(card, { attributes: true, attributeFilter: ["style"] })
+  })
+  document.addEventListener("DOMContentLoaded", updateNoResults)
+</script>
