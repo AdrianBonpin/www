@@ -1,0 +1,76 @@
+---
+// src/pages/about.astro
+import Base from "../layouts/base.astro"
+import SectionHeading from "../components/section-heading.astro"
+import SkillsGrid from "../components/skills-grid.astro"
+import ExperienceTimeline from "../components/experience-timeline.astro"
+import { experiences } from "../data/experience"
+import { education } from "../data/education"
+import { siteConfig } from "../data/site-config"
+---
+
+<Base
+  title={`About — ${siteConfig.name}`}
+  description="Learn more about Adrian Bonpin — full-stack developer, skills, experience, and background."
+>
+  <main class="pt-20 pb-10 space-y-16">
+    {/* Header */}
+    <section class="w-full max-w-7xl mx-auto px-4 flex flex-col md:flex-row gap-8 items-start">
+      <div class="flex-1 space-y-4">
+        <h1 class="text-3xl md:text-5xl font-bold">Hey, I'm Adrian</h1>
+        <p class="text-xl text-text/70">{siteConfig.title}</p>
+        <p class="text-lg text-text/80 max-w-prose text-justify">
+          I'm a web and software developer based in the {siteConfig.location}, passionate about
+          creating unique digital experiences. I specialize in Next.js and Astro,
+          and I love building things that are both beautiful and functional.
+        </p>
+        <p class="text-lg text-text/80 max-w-prose text-justify">
+          I work with the talented team at{" "}
+          <a href="https://devgo.studio" target="_blank" class="text-primary underline">DEVGO Studio</a>,
+          where we craft custom websites and web applications for clients. When I'm not coding,
+          I'm tinkering with split keyboards, 3D printing, or exploring new tech.
+        </p>
+      </div>
+      {/* Photo placeholder — replace src with an actual photo */}
+      <div class="flex-shrink-0 w-48 h-48 md:w-64 md:h-64 rounded-xl bg-accent/50 border border-text/10 overflow-hidden">
+        <div class="w-full h-full flex items-center justify-center text-text/30 text-sm font-pixel">
+          Photo
+        </div>
+      </div>
+    </section>
+
+    {/* Skills */}
+    <section>
+      <SectionHeading title="Skills & Technologies" />
+      <div class="mt-8">
+        <SkillsGrid />
+      </div>
+    </section>
+
+    {/* Experience */}
+    <section>
+      <SectionHeading title="Experience" />
+      <div class="mt-8">
+        <ExperienceTimeline experiences={experiences} />
+      </div>
+    </section>
+
+    {/* Education */}
+    {education.length > 0 && (
+      <section>
+        <SectionHeading title="Education" />
+        <div class="w-full max-w-7xl mx-auto px-4 mt-8 space-y-4">
+          {education.map((edu) => (
+            <div class="flex flex-row justify-between items-baseline p-3 border-b border-text/10">
+              <div>
+                <h4 class="font-semibold">{edu.credential} — {edu.field}</h4>
+                <p class="text-text/70">{edu.institution}</p>
+              </div>
+              <span class="text-sm text-text/50 font-pixel">{edu.year}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+  </main>
+</Base>
