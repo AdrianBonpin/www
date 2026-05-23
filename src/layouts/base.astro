@@ -16,6 +16,7 @@ interface Props {
     url?: string
     type?: string
     author?: string
+    publishedTime?: string
 }
 
 const {
@@ -26,13 +27,27 @@ const {
     url = Astro.url.href,
     type = "website",
     author = "Adrian Bonpin",
+    publishedTime,
 } = Astro.props
 
 const siteName = "Adrian Bonpin"
-const canonicalURL = new URL(
-    Astro.url.pathname,
-    Astro.site || "https://adrianbonpin.com"
-)
+const siteUrl = Astro.site || "https://adrianbonpin.com"
+const canonicalURL = new URL(Astro.url.pathname, siteUrl)
+const pagePath = Astro.url.pathname
+
+// Generate breadcrumb items based on pathname
+const breadcrumbItems = (() => {
+    const parts = pagePath.split("/").filter(Boolean)
+    if (parts.length === 0) return []
+    const items = [
+        { name: "Home", path: "/" },
+        ...parts.map((part, i) => ({
+            name: part.charAt(0).toUpperCase() + part.slice(1),
+            path: "/" + parts.slice(0, i + 1).join("/"),
+        })),
+    ]
+    return items
+})()
 ---
 
 <!doctype html>
@@ -69,9 +84,39 @@ const canonicalURL = new URL(
             name='author'
             content={author}
         />
+        <meta
+            name='application-name'
+            content={siteName}
+        />
         <link
             rel='canonical'
             href={canonicalURL}
+        />
+
+        <!-- Browser / Device -->
+        <meta
+            http-equiv='X-UA-Compatible'
+            content='IE=edge'
+        />
+        <meta
+            name='theme-color'
+            content='#18122b'
+        />
+        <meta
+            name='color-scheme'
+            content='dark'
+        />
+        <meta
+            name='format-detection'
+            content='telephone=no'
+        />
+        <meta
+            name='apple-mobile-web-app-capable'
+            content='yes'
+        />
+        <meta
+            name='apple-mobile-web-app-status-bar-style'
+            content='black-translucent'
         />
 
         <!-- Open Graph / Facebook -->
@@ -93,11 +138,23 @@ const canonicalURL = new URL(
         />
         <meta
             property='og:image'
-            content={new URL(image, Astro.site || "https://adrianbonpin.com")}
+            content={new URL(image, siteUrl)}
+        />
+        <meta
+            property='og:image:width'
+            content='1200'
+        />
+        <meta
+            property='og:image:height'
+            content='630'
         />
         <meta
             property='og:site_name'
             content={siteName}
+        />
+        <meta
+            property='og:locale'
+            content='en_US'
         />
 
         <!-- Twitter -->
@@ -119,7 +176,15 @@ const canonicalURL = new URL(
         />
         <meta
             property='twitter:image'
-            content={new URL(image, Astro.site || "https://adrianbonpin.com")}
+            content={new URL(image, siteUrl)}
+        />
+        <meta
+            property='twitter:site'
+            content='@adrianbonpin'
+        />
+        <meta
+            property='twitter:creator'
+            content='@adrianbonpin'
         />
 
         <!-- Favicon -->
@@ -128,47 +193,118 @@ const canonicalURL = new URL(
             href='/favicon.png'
             type='image/png'
         />
+        <link
+            rel='apple-touch-icon'
+            href='/favicon.png'
+        />
 
-        <!-- JSON-LD Structured Data -->
+        <!-- Hreflang -->
+        <link
+            rel='alternate'
+            href={canonicalURL}
+            hreflang='en'
+        />
+        <link
+            rel='alternate'
+            href={canonicalURL}
+            hreflang='x-default'
+        />
+
+        <!-- JSON-LD: Person -->
         <script
             type='application/ld+json'
             set:html={JSON.stringify({
                 "@context": "https://schema.org",
                 "@type": "Person",
                 name: "Adrian Bonpin",
+                givenName: "Adrian",
+                familyName: "Bonpin",
                 jobTitle: "Full Stack Developer & Creative Technologist",
                 description: description,
-                url: url,
-                image: new URL(image, Astro.site || "https://adrianbonpin.com"),
+                url: siteUrl,
+                image: new URL(image, siteUrl),
+                email: "adrianbonpin@gmail.com",
+                address: {
+                    "@type": "PostalAddress",
+                    addressCountry: "PH",
+                },
+                alumniOf: [
+                    {
+                        "@type": "CollegeOrUniversity",
+                        name: "University of San Carlos",
+                    },
+                    {
+                        "@type": "CollegeOrUniversity",
+                        name: "Xavier University Ateneo de Cagayan",
+                    },
+                ],
                 sameAs: [
-                  "https://github.com/adrianbonpin",
-                  "https://linkedin.com/in/adrianbonpin",
+                    "https://github.com/adrianbonpin",
+                    "https://linkedin.com/in/adrianbonpin",
                 ],
                 knowsAbout: [
-                  "Web Development",
-                  "Next.js",
-                  "Astro",
-                  "TypeScript",
-                  "Tailwind CSS",
-                  "React",
+                    "Web Development",
+                    "Next.js",
+                    "Astro",
+                    "TypeScript",
+                    "Tailwind CSS",
+                    "React",
+                    "Full-Stack Development",
+                    "UI/UX Design",
                 ],
+                knowsLanguage: ["English", "Filipino"],
             })}
         />
 
+        <!-- JSON-LD: WebSite -->
         <script
             type='application/ld+json'
             set:html={JSON.stringify({
                 "@context": "https://schema.org",
                 "@type": "WebSite",
                 name: siteName,
-                url: Astro.site || "https://adrianbonpin.com",
+                url: siteUrl,
                 description: description,
                 author: {
                     "@type": "Person",
                     name: author,
                 },
+                inLanguage: "en",
             })}
         />
+
+        <!-- JSON-LD: BreadcrumbList -->
+        {breadcrumbItems.length > 0 && (
+            <script
+                type='application/ld+json'
+                set:html={JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "BreadcrumbList",
+                    itemListElement: breadcrumbItems.map((item, i) => ({
+                        "@type": "ListItem",
+                        position: i + 1,
+                        name: item.name,
+                        item: new URL(item.path, siteUrl).href,
+                    })),
+                })}
+            />
+        )}
+
+        <!-- JSON-LD: Published time for pages that provide it -->
+        {publishedTime && (
+            <script
+                type='application/ld+json'
+                set:html={JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "WebPage",
+                    name: title,
+                    description: description,
+                    url: canonicalURL.href,
+                    datePublished: publishedTime,
+                    dateModified: new Date().toISOString().split("T")[0],
+                })}
+            />
+        )}
 
         <!-- Analytics -->
         <script
@@ -196,11 +332,13 @@ const canonicalURL = new URL(
                     <a
                         href='https://github.com/adrianbonpin'
                         target='_blank'
+                        rel='noopener noreferrer'
                         >GitHub</a
                     >
                     <a
                         href='https://linkedin.com/in/adrianbonpin'
                         target='_blank'
+                        rel='noopener noreferrer'
                         >LinkedIn</a
                     >
                 </div>

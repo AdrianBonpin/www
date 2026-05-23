@@ -117,7 +117,7 @@ const infoCards = [
             {contactLinks.map((link, i) => (
               <a
                 href={link.href}
-                target={link.external ? "_blank" : undefined}
+                target={link.external ? "_blank" : undefined} rel={link.external ? "noopener noreferrer" : undefined}
                 class:list={[
                   "group flex items-center gap-4 p-4 outline outline-1 -outline-offset-1 outline-text/10",
                   "hover:bg-accent/10 hover:outline-primary/30 transition-all duration-300",

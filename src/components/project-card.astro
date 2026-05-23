@@ -12,12 +12,14 @@ const { project } = Astro.props
 <a
   href={project.link}
   target="_blank"
+  rel="noopener noreferrer"
   class="group flex flex-col rounded-xl border border-text/10 bg-text/5 overflow-hidden hover:border-primary/50 hover:-translate-y-1 transition-all duration-300"
 >
   <div class="overflow-hidden aspect-video">
     <img
       src={project.img.src}
       alt={project.title}
+      loading="lazy"
       class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
     />
   </div>

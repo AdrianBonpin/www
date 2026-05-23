@@ -36,7 +36,7 @@ const { experiences, compact = false } = Astro.props
             </div>
             <p class="text-text/70">
               {exp.companyUrl ? (
-                <a href={exp.companyUrl} target="_blank" class="text-primary hover:underline">
+                <a href={exp.companyUrl} target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">
                   {exp.company}
                 </a>
               ) : (

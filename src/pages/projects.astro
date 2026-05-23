@@ -30,6 +30,7 @@ import { siteConfig } from "../data/site-config"
         <a
           href={project.link}
           target="_blank"
+          rel="noopener noreferrer"
           class="group flex flex-col outline outline-1 -outline-offset-1 outline-text/10 overflow-hidden hover:outline-primary/50 hover:z-10 transition-all duration-300 project-card"
           style="opacity: 0;"
           data-project-card
@@ -42,6 +43,7 @@ import { siteConfig } from "../data/site-config"
             <img
               src={project.img.src}
               alt={project.title}
+              loading="lazy"
               class="w-full h-full object-cover object-top transition-transform duration-300"
             />
           </div>

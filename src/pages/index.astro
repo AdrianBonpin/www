@@ -135,6 +135,7 @@ const yearsOfExperience = currentYear - firstProjectYear
               id="featured-preview-img"
               src=""
               alt=""
+              loading="lazy"
               class="w-[24vw] max-w-[340px] aspect-video object-cover object-top block"
             />
             <div class="px-4 py-2 bg-gradient-to-t from-background/90 to-transparent">
@@ -147,6 +148,7 @@ const yearsOfExperience = currentYear - firstProjectYear
           <a
             href={project.link}
             target="_blank"
+            rel="noopener noreferrer"
             class="group list-item block border-t border-text/10 transition-all hover:bg-accent/5"
             data-img={project.img.src}
             data-label={`${project.type} · ${project.framework}`}
@@ -181,6 +183,7 @@ const yearsOfExperience = currentYear - firstProjectYear
                 <img
                   src={project.img.src}
                   alt={project.title}
+                  loading="lazy"
                   class="w-full aspect-video object-cover object-top rounded-lg border border-text/10"
                 />
                 <div class="flex flex-wrap items-center gap-x-2 gap-y-1 mt-2 text-xs">
