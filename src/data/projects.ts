@@ -24,8 +24,20 @@ import klbhs from "../assets/websites/klbhs.webp";
 import whatscookin from "../assets/websites/whatscookin.webp";
 import sync2va from "../assets/websites/sync2va.webp";
 import deckyvault from "../assets/websites/deckyvault.png";
+import serialkittenv2 from "../assets/websites/serialkitten-v2.png";
 
 export const projects: Project[] = [
+  {
+    title: "SerialKitten",
+    type: "client",
+    desc: "Major Production Company based in Manila",
+    img: serialkittenv2,
+    link: "https://serialkitten.com",
+    framework: "Astro",
+    techTags: ["Astro", "Tailwind"],
+    role: "Solo Developer",
+    year: 2026,
+  },
   {
     title: "DeckyVault",
     type: "personal",
