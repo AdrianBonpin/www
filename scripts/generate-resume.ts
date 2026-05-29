@@ -43,6 +43,7 @@ import { siteConfig } from "../src/data/site-config"
 import { experiences } from "../src/data/experience"
 import { skillCategories } from "../src/data/skills"
 import { education } from "../src/data/education"
+import { certificates } from "../src/data/certificates"
 
 // Inline project text data (avoid importing Astro image assets in Node.js builds)
 const projects = [
@@ -368,7 +369,9 @@ async function buildResume() {
       checkPage(25)
       const credSize = 10
       const yearSize = 9
-      const yearText = String(edu.year)
+      const yearText = edu.status === "expected"
+        ? `Expected ${edu.year}`
+        : String(edu.year)
       const yearW = ctx.fontRegular.widthOfTextAtSize(yearText, yearSize)
 
       const credText = `${edu.credential}, ${edu.field}`
@@ -396,6 +399,56 @@ async function buildResume() {
         color: C.textSecondary,
       })
       ctx.y -= 16
+    }
+  }
+
+  // ── CERTIFICATIONS ──
+  if (certificates.length > 0) {
+    checkPage(50)
+    sectionHeader(ctx, "Certifications")
+
+    for (const cert of certificates) {
+      checkPage(25)
+      const certSize = 10
+      const yearSize = 9
+      const statusText = cert.status === "passed" ? `Passed ${cert.year}` : String(cert.year)
+      const statusW = ctx.fontRegular.widthOfTextAtSize(statusText, yearSize)
+
+      ctx.page.drawText(cert.name, {
+        x: ctx.x,
+        y: ctx.y,
+        size: certSize,
+        font: ctx.fontBold,
+        color: C.text,
+      })
+      ctx.page.drawText(statusText, {
+        x: ctx.x + CONTENT_WIDTH - statusW,
+        y: ctx.y,
+        size: yearSize,
+        font: ctx.fontRegular,
+        color: C.textSecondary,
+      })
+      ctx.y -= 12
+
+      ctx.page.drawText(`${cert.issuer}`, {
+        x: ctx.x,
+        y: ctx.y,
+        size: 9,
+        font: ctx.fontRegular,
+        color: C.textSecondary,
+      })
+      ctx.y -= 14
+
+      if (cert.description) {
+        drawText(ctx, cert.description, {
+          size: 9,
+          color: C.textSecondary,
+          lineHeight: 12,
+          maxWidth: CONTENT_WIDTH,
+        })
+        ctx.y -= 4
+      }
+      ctx.y -= 4
     }
   }
 

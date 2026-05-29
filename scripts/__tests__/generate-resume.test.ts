@@ -83,4 +83,23 @@ describe("generate-resume script", () => {
     expect(text).toContain("Tattoo portfolio management and booking suite")
     expect(text).toContain("Multi-location tattoo and piercing studio")
   })
+
+  it("should contain the PhilNITS FE certificate", async () => {
+    const pdfBytes = await Bun.file(OUTPUT_PATH).arrayBuffer()
+    const text = extractPdfText(new Uint8Array(pdfBytes))
+    expect(text).toContain("PhilNITS")
+  })
+
+  it("should show 'Expected 2027' for in-progress education", async () => {
+    const pdfBytes = await Bun.file(OUTPUT_PATH).arrayBuffer()
+    const text = extractPdfText(new Uint8Array(pdfBytes))
+    expect(text).toContain("Expected 2027")
+  })
+
+  it("should have a PDF with at least 1 page", async () => {
+    const { PDFDocument } = await import("pdf-lib")
+    const pdfBytes = await Bun.file(OUTPUT_PATH).arrayBuffer()
+    const pdfDoc = await PDFDocument.load(pdfBytes)
+    expect(pdfDoc.getPages().length).toBeGreaterThanOrEqual(1)
+  })
 })
