@@ -28,7 +28,22 @@ export interface Education {
   institution: string
   credential: string
   field: string
+  /** Graduation year or expected graduation year */
   year: number
+  /** Status: "completed" | "in-progress" | "expected". Defaults to "completed" when absent */
+  status?: "completed" | "in-progress" | "expected"
+}
+
+export interface Certificate {
+  name: string
+  issuer: string
+  year: number
+  /** Optional URL to verify the certificate (e.g., PhilNITS passers list) */
+  url?: string
+  /** Optional description or additional context */
+  description?: string
+  /** Whether the certificate has been physically received */
+  status?: "passed" | "awarded"
 }
 
 export interface SiteConfig {
