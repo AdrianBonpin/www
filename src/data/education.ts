@@ -6,7 +6,8 @@ export const education: Education[] = [
     institution: "University of San Carlos",
     credential: "Bachelor of Science",
     field: "Information Technology",
-    year: 2022,
+    year: 2027,
+    status: "expected",
   },
   {
     institution: "Xavier University Ateneo de Cagayan",
