@@ -4,6 +4,7 @@ import ExperienceTimeline from "../components/experience-timeline.astro"
 import SkillsCompact from "../components/skills-compact.astro"
 import { experiences } from "../data/experience"
 import { education } from "../data/education"
+import { certificates } from "../data/certificates"
 import { projects } from "../data/projects"
 import { skillCategories } from "../data/skills"
 import { siteConfig } from "../data/site-config"
@@ -18,6 +19,7 @@ import {
   Code2Icon,
   GraduationCapIcon,
   FileTextIcon,
+  AwardIcon,
 } from "@lucide/astro"
 
 const currentYear = new Date().getFullYear()
@@ -252,7 +254,59 @@ const quickLinks = [
                   <p class="text-text/60 text-sm mt-1">{edu.desc}</p>
                 )}
               </div>
-              <span class="text-sm text-text/50 font-pixel">{edu.year}</span>
+              <span class="text-sm text-text/50 font-pixel">
+                {edu.status === "expected" ? `Expected ${edu.year}` : edu.year}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {/* ─── CERTIFICATIONS ─── */}
+    {certificates.length > 0 && (
+      <section class="w-full py-12 md:py-16 border-t border-text/10">
+        <div class="w-full max-w-7xl mx-auto px-4 mb-8 md:mb-10 cert-heading" style="opacity: 0;">
+          <div class="flex items-center gap-3">
+            <AwardIcon class="w-5 h-5 md:w-6 md:h-6 text-primary" />
+            <p class="text-xs md:text-sm font-pixel text-primary tracking-widest uppercase">
+              Credentials
+            </p>
+          </div>
+          <h2 class="text-4xl md:text-5xl font-bold mt-3">Certifications</h2>
+        </div>
+
+        <div class="w-full max-w-7xl mx-auto px-4 space-y-0 cert-body" style="opacity: 0;">
+          {certificates.map((cert, i) => (
+            <div
+              class:list={[
+                "flex flex-row justify-between items-baseline p-4 md:p-5 border-t border-text/10 hover:bg-accent/5 transition-colors",
+                i === certificates.length - 1 && "border-b border-text/10",
+              ]}
+            >
+              <div>
+                <h4 class="font-semibold text-lg">
+                  {cert.name}
+                  {cert.url && (
+                    <a
+                      href={cert.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="ml-2 text-xs text-primary/60 hover:text-primary underline underline-offset-2 inline-flex items-center gap-1"
+                    >
+                      <span>verify</span>
+                      <ArrowRightIcon class="w-3 h-3" />
+                    </a>
+                  )}
+                </h4>
+                <p class="text-text/70">{cert.issuer}</p>
+                {cert.description && (
+                  <p class="text-text/60 text-sm mt-1">{cert.description}</p>
+                )}
+              </div>
+              <span class="text-sm text-text/50 font-pixel">
+                {cert.status === "passed" ? `Passed ${cert.year}` : cert.year}
+              </span>
             </div>
           ))}
         </div>
@@ -357,6 +411,17 @@ const quickLinks = [
         )
         tl.add(
           ".edu-body",
+          { opacity: [0, 1], translateY: [16, 0], duration: 700 },
+          "-=400"
+        )
+
+        tl.add(
+          ".cert-heading",
+          { opacity: [0, 1], translateY: [20, 0], duration: 700 },
+          "-=500"
+        )
+        tl.add(
+          ".cert-body",
           { opacity: [0, 1], translateY: [16, 0], duration: 700 },
           "-=400"
         )
