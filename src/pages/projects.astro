@@ -73,7 +73,7 @@ import { siteConfig } from "../data/site-config"
             <div class="flex flex-wrap items-center gap-x-2 gap-y-1 mt-auto pt-2.5">
               <span class="text-xs font-pixel text-text/50 uppercase tracking-wider">{project.type}</span>
               <span class="text-xs font-pixel px-2 py-0.5 rounded bg-accent/50 text-text/70">{project.framework}</span>
-              {project.techTags.slice(0, 2).map((tag) => (
+              {project.techTags.filter((tag) => tag !== project.framework).slice(0, 2).map((tag) => (
                 <span class="text-xs font-pixel px-2 py-0.5 rounded bg-accent/30 text-text/60">{tag}</span>
               ))}
             </div>

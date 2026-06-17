@@ -37,7 +37,7 @@ const { project } = Astro.props
     <p class="text-sm text-text/70 line-clamp-2">{project.desc}</p>
     <div class="flex flex-wrap gap-1.5 mt-auto">
       <span class="text-xs font-pixel px-2 py-0.5 rounded bg-accent/50 text-text/70">{project.framework}</span>
-      {project.techTags.map((tag) => (
+      {project.techTags.filter((tag) => tag !== project.framework).map((tag) => (
         <span class="text-xs px-2 py-0.5 rounded bg-accent/30 text-text/60">{tag}</span>
       ))}
     </div>

@@ -13,6 +13,7 @@ export interface Project {
   year: number;
 }
 
+import wildrounds from "../assets/websites/wildrounds.png";
 import devgo from "../assets/websites/devgo.png";
 import grounds from "../assets/websites/groundsph.jpeg";
 import inksight from "../assets/websites/inksight.png";
@@ -27,6 +28,17 @@ import deckyvault from "../assets/websites/deckyvault.png";
 import serialkittenv2 from "../assets/websites/serialkitten-v2.png";
 
 export const projects: Project[] = [
+  {
+    title: "Wild Rounds Pilipinas Open",
+    type: "client",
+    desc: "Competitive Gaming Tournament Platform — #RoadToSmash",
+    img: wildrounds,
+    link: "https://wildroundspilipinasopen.com",
+    framework: "Astro",
+    techTags: ["Tailwind"],
+    role: "Solo Developer",
+    year: 2026,
+  },
   {
     title: "SerialKitten",
     type: "client",
@@ -44,7 +56,7 @@ export const projects: Project[] = [
     desc: "A fast, modern browser for finding game benchmarks, settings, and guides for Steam Deck OLED & LCD",
     img: deckyvault,
     link: "https://deckyvault.xyz",
-    framework: "NextJs",
+    framework: "Next.js",
     techTags: ["React", "Next.js", "Tailwind", "PostgreSQL", "Elysia"],
     role: "Solo Developer",
     year: 2026,
@@ -66,7 +78,7 @@ export const projects: Project[] = [
     desc: "Community-driven cafe discovery platform featuring leaderboards, reviews, and curated Filipino coffee culture",
     img: grounds,
     link: "https://grounds.ph",
-    framework: "NextJs",
+    framework: "Next.js",
     techTags: ["React", "Next.js", "Tailwind", "Mapbox"],
     role: "Solo Developer",
     year: 2026,
@@ -77,7 +89,7 @@ export const projects: Project[] = [
     desc: "Tattoo portfolio management and booking suite built for RDMD Studio artists and clients",
     img: inksight,
     link: "https://inksight.rdmdstudio.com",
-    framework: "NextJs",
+    framework: "Next.js",
     techTags: ["React", "Next.js", "Tailwind"],
     role: "Solo Developer",
     year: 2026,
@@ -143,7 +155,7 @@ export const projects: Project[] = [
     desc: "Recipe Storage w/ AI integration",
     img: whatscookin,
     link: "https://adrianbonpin.com",
-    framework: "NextJs",
+    framework: "Next.js",
     techTags: ["React", "Next.js", "Tailwind", "OpenAI"],
     role: "Solo Developer",
     year: 2024,
@@ -154,7 +166,7 @@ export const projects: Project[] = [
     desc: "Virtual Assistant and Book Keeping Training Agency",
     img: sync2va,
     link: "https://sync2va.com",
-    framework: "NextJs",
+    framework: "Next.js",
     techTags: ["React", "Next.js", "Tailwind"],
     role: "Solo Developer",
     year: 2024,

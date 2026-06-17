@@ -2,27 +2,27 @@
 
 A modern, performant portfolio website showcasing custom web development projects. Built with Astro for optimal performance and SEO.
 
-![Portfolio Preview](https://img.shields.io/badge/Built%20with-Astro-FF5D01?style=for-the-badge&logo=astro&logoColor=white)
-![Styling](https://img.shields.io/badge/Styled%20with-Tailwind%20CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Built with Astro](https://img.shields.io/badge/Built%20with-Astro-FF5D01?style=for-the-badge&logo=astro&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Styled%20with-Tailwind%20CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 
-## 🚀 Live Demo
+## Live Demo
 
 Visit the live site: [adrianbonpin.com](https://adrianbonpin.com)
 
-## ✨ Features
+## Features
 
--   **⚡ Lightning Fast** - Built with Astro for optimal performance and SEO
--   **🎨 Modern Design** - Clean, contemporary UI with smooth animations
--   **📱 Fully Responsive** - Optimized for all devices and screen sizes
--   **🔍 SEO Optimized** - Comprehensive meta tags, Open Graph, and JSON-LD structured data
--   **🎭 Interactive Hero** - Custom ASCII liquid animation effect
--   **📊 Project Showcase** - Horizontal scrolling gallery with client and personal projects
--   **🍪 Analytics Consent** - Privacy-focused analytics with user consent system
--   **♿ Accessible** - Semantic HTML with proper heading hierarchy
--   **🎯 Smooth Navigation** - Scroll-to-section navigation with smooth animations
+-   **Lightning Fast** - Built with Astro for optimal performance and SEO
+-   **Modern Design** - Clean, contemporary UI with smooth animations
+-   **Fully Responsive** - Optimized for all devices and screen sizes
+-   **SEO Optimized** - Comprehensive meta tags, Open Graph, and JSON-LD structured data
+-   **Interactive Hero** - Custom ASCII liquid animation effect
+-   **Project Showcase** - Horizontal scrolling gallery with client and personal projects
+-   **Analytics Consent** - Privacy-focused analytics with user consent system
+-   **Accessible** - Semantic HTML with proper heading hierarchy
+-   **Smooth Navigation** - Scroll-to-section navigation with smooth animations
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Core
 
@@ -52,7 +52,7 @@ Visit the live site: [adrianbonpin.com](https://adrianbonpin.com)
 -   **[Rybbit Analytics](https://rybbit.dev)** - Privacy-focused, anonymous analytics
 -   **Custom consent management** - 7-day localStorage tracking
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 /
@@ -61,26 +61,42 @@ Visit the live site: [adrianbonpin.com](https://adrianbonpin.com)
 ├── src/
 │   ├── assets/
 │   │   ├── photos/          # Personal photos
+│   │   ├── side-projects/   # Side project screenshots
 │   │   └── websites/        # Project screenshots
 │   ├── components/
+│   │   ├── project-card.astro
+│   │   ├── project-filter.astro
 │   │   ├── analytics.astro  # Analytics consent banner
 │   │   ├── hero-rain.astro  # ASCII liquid animation
-│   │   ├── navbar.astro     # Navigation component
-│   │   └── projects.astro   # Project showcase carousel
+│   │   └── navbar.astro     # Navigation component
+│   ├── data/
+│   │   ├── projects.ts      # Project data and type definitions
+│   │   ├── side-projects.ts # Side project data
+│   │   ├── certificates.ts
+│   │   ├── education.ts
+│   │   ├── experience.ts
+│   │   ├── site-config.ts
+│   │   ├── skills.ts
+│   │   └── types.ts
 │   ├── layouts/
 │   │   └── base.astro       # Base layout with SEO meta tags
 │   ├── pages/
-│   │   └── index.astro      # Homepage
-│   ├── styles/
-│   │   └── global.css       # Global styles and Tailwind config
-│   └── utils/
-│       └── projects.ts      # Project data and type definitions
+│   │   ├── index.astro      # Homepage
+│   │   ├── projects.astro   # Projects listing page
+│   │   ├── about.astro      # About page
+│   │   ├── resume.astro     # Resume page
+│   │   └── contact.astro    # Contact page
+│   └── styles/
+│       └── global.css       # Global styles and Tailwind config
+├── scripts/
+│   ├── generate-og.ts       # OG image generation
+│   └── generate-resume.ts   # Resume PDF generation
 ├── astro.config.mjs         # Astro configuration
 ├── package.json             # Dependencies and scripts
 └── tsconfig.json            # TypeScript configuration
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -124,21 +140,24 @@ Visit the live site: [adrianbonpin.com](https://adrianbonpin.com)
 -   `pnpm preview` - Preview production build locally
 -   `pnpm astro` - Run Astro CLI commands
 
-## 🎨 Customization
+## Customization
 
 ### Adding New Projects
 
-Edit `src/utils/projects.ts` to add your projects:
+Edit `src/data/projects.ts` to add your projects:
 
 ```typescript
 export const projects: Project[] = [
     {
         title: "Your Project",
-        tag: "client", // or 'personal'
+        type: "client", // or 'personal'
         desc: "Project description",
         img: yourProjectImage,
         link: "https://project-url.com",
-        framework: "Astro", // or 'NextJs', etc.
+        framework: "Astro", // or 'Next.js', etc.
+        techTags: ["Astro", "Tailwind"],
+        role: "Solo Developer",
+        year: 2026,
     },
     // ... more projects
 ]
@@ -172,21 +191,21 @@ Edit `src/styles/global.css` to customize the color scheme:
 }
 ```
 
-## 🔍 SEO Features
+## SEO Features
 
 This site includes comprehensive SEO optimization:
 
--   ✅ Meta descriptions and keywords
--   ✅ Open Graph tags for social media sharing
--   ✅ Twitter Card support
--   ✅ JSON-LD structured data (Person & WebSite schemas)
--   ✅ Canonical URLs
--   ✅ Semantic HTML structure
--   ✅ Proper heading hierarchy (H1 → H2 → H3)
--   ✅ Mobile-friendly viewport configuration
--   ✅ Fast loading times (static site generation)
+-   Meta descriptions and keywords
+-   Open Graph tags for social media sharing
+-   Twitter Card support
+-   JSON-LD structured data (Person & WebSite schemas)
+-   Canonical URLs
+-   Semantic HTML structure
+-   Proper heading hierarchy (H1 -> H2 -> H3)
+-   Mobile-friendly viewport configuration
+-   Fast loading times (static site generation)
 
-## 📊 Analytics
+## Analytics
 
 This site uses [Rybbit Analytics](https://rybbit.dev) for privacy-focused analytics tracking. The analytics banner:
 
@@ -195,19 +214,19 @@ This site uses [Rybbit Analytics](https://rybbit.dev) for privacy-focused analyt
 -   Hides for 7 days after acceptance
 -   Allows users to opt-out by disabling JavaScript
 
-## 🌐 Browser Support
+## Browser Support
 
--   ✅ Chrome (latest)
--   ✅ Firefox (latest)
--   ✅ Safari (latest)
--   ✅ Edge (latest)
--   ✅ Mobile browsers
+-   Chrome (latest)
+-   Firefox (latest)
+-   Safari (latest)
+-   Edge (latest)
+-   Mobile browsers
 
-## 📄 License
+## License
 
-Copyright © 2025 Adrian Bonpin. All rights reserved.
+Copyright (c) 2025 Adrian Bonpin. All rights reserved.
 
-## 🤝 Connect
+## Connect
 
 -   **Portfolio**: [adrianbonpin.com](https://adrianbonpin.com)
 -   **GitHub**: [@adrianbonpin](https://github.com/adrianbonpin)
@@ -217,4 +236,4 @@ Copyright © 2025 Adrian Bonpin. All rights reserved.
 
 ---
 
-Built with ❤️ using [Astro](https://astro.build) | Building Dreams. One Line at a Time.
+Built with care using [Astro](https://astro.build) | Building Dreams. One Line at a Time.
