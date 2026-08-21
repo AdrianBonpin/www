@@ -108,7 +108,7 @@ Visit the live site: [adrianbonpin.com](https://adrianbonpin.com)
 1. **Clone the repository**
 
     ```bash
-    git clone https://github.com/adrianbonpin/www.git
+    git clone https://git.ranio.xyz/adrianbonpin/www.git
     cd www
     ```
 
@@ -229,7 +229,7 @@ Copyright (c) 2025 Adrian Bonpin. All rights reserved.
 ## Connect
 
 -   **Portfolio**: [adrianbonpin.com](https://adrianbonpin.com)
--   **GitHub**: [@adrianbonpin](https://github.com/adrianbonpin)
+-   **Gitea**: [@adrianbonpin](https://git.ranio.xyz/adrianbonpin)
 -   **LinkedIn**: [adrianbonpin](https://linkedin.com/in/adrianbonpin)
 -   **Email**: [adrianbonpin@gmail.com](mailto:adrianbonpin@gmail.com)
 -   **Studio**: [DEVGO Studio](https://devgo.studio)

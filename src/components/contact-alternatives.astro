@@ -2,10 +2,9 @@
 // src/components/contact-alternatives.astro
 // Shown when contactFormEnabled is false — direct contact links instead of the form
 import { siteConfig } from "../data/site-config"
+import GiteaIcon from "./icons/GiteaIcon.astro"
+import LinkedinIcon from "./icons/LinkedinIcon.astro"
 import {
-  MailIcon,
-  GithubIcon,
-  LinkedinIcon,
   SendIcon,
   ClockIcon,
 } from "@lucide/astro"
@@ -40,22 +39,22 @@ import {
       <SendIcon class="w-5 h-5 text-text/30 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300 shrink-0" />
     </a>
 
-    {/* GitHub */}
+    {/* Gitea */}
     <a
-      href={siteConfig.socials.github}
+      href={siteConfig.socials.gitea}
       target="_blank"
       rel="noopener noreferrer"
       class="flex items-center gap-4 p-5 rounded-xl border border-text/10 hover:border-primary/30 hover:bg-accent/10 transition-all duration-300 group hover:-translate-y-0.5"
     >
       <div class="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 transition-colors shrink-0">
-        <GithubIcon class="w-6 h-6 text-primary" />
+        <GiteaIcon class="w-6 h-6 text-primary" />
       </div>
       <div class="flex-1 min-w-0">
-        <p class="font-semibold group-hover:text-primary transition-colors">GitHub</p>
+        <p class="font-semibold group-hover:text-primary transition-colors">Gitea</p>
         <p class="text-sm text-text/50 font-pixel">@adrianbonpin</p>
         <p class="text-xs text-text/40 mt-1">Open source contributions and projects</p>
       </div>
-      <GithubIcon class="w-5 h-5 text-text/30 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300 shrink-0" />
+      <GiteaIcon class="w-5 h-5 text-text/30 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300 shrink-0" />
     </a>
 
     {/* LinkedIn */}

@@ -3,16 +3,18 @@ import Base from "../layouts/base.astro"
 import ContactForm from "../components/contact-form.astro"
 import ContactAlternatives from "../components/contact-alternatives.astro"
 import { siteConfig } from "../data/site-config"
+import GiteaIcon from "../components/icons/GiteaIcon.astro"
+import LinkedinIcon from "../components/icons/LinkedinIcon.astro"
 import {
   MailIcon,
-  GithubIcon,
-  LinkedinIcon,
   MapPinIcon,
   ArrowRightIcon,
   SendIcon,
   GlobeIcon,
   ClockIcon,
 } from "@lucide/astro"
+
+const pageUrl = Astro.url.href
 
 const contactLinks = [
   {
@@ -23,10 +25,10 @@ const contactLinks = [
     desc: "Best for project inquiries",
   },
   {
-    icon: GithubIcon,
-    label: "GitHub",
+    icon: GiteaIcon,
+    label: "Gitea",
     value: "@adrianbonpin",
-    href: siteConfig.socials.github,
+    href: siteConfig.socials.gitea,
     desc: "Open source & contributions",
     external: true,
   },
@@ -264,19 +266,19 @@ const infoCards = [
     })
   </script>
   <!-- ContactPage JSON-LD -->
-  <script
+  <script is:inline
     type="application/ld+json"
     set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@type": "ContactPage",
-      "url": Astro.url.href,
+      "url": pageUrl,
       "description": "Get in touch with Adrian Bonpin — contact form, email, and social links for project inquiries.",
       "mainEntity": {
         "@type": "Person",
         "name": siteConfig.name,
         "email": siteConfig.email,
         "sameAs": [
-          siteConfig.socials.github,
+          siteConfig.socials.gitea,
           siteConfig.socials.linkedin,
         ],
       },

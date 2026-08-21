@@ -11,22 +11,24 @@
         "generate-resume": "npx tsx scripts/generate-resume.ts"
     },
     "dependencies": {
-        "@astrojs/check": "^0.9.9",
+        "@astrojs/check": "^0.9.10",
         "@fontsource-variable/lora": "^5.2.8",
         "@fontsource-variable/raleway": "^5.2.8",
         "@fontsource/fusion-pixel-12px-monospaced-jp": "^5.2.5",
         "@lucide/astro": "^0.555.0",
-        "@tailwindcss/vite": "^4.1.17",
+        "@tailwindcss/vite": "^4.3.3",
         "animejs": "^4.2.2",
-        "astro": "6.1.6",
+        "astro": "^7.2.4",
         "pdf-lib": "^1.17.1",
         "pixi.js": "^8.18.1",
         "resend": "^6.12.3",
-        "tailwindcss": "^4.1.17",
+        "tailwindcss": "^4.3.3",
         "typescript": "^6.0.3"
     },
     "devDependencies": {
+        "@cloudflare/workers-types": "^5.20260821.1",
         "@resvg/resvg-js": "^2.6.2",
+        "@types/bun": "^1.4.0",
         "satori": "^0.21.0",
         "tsx": "^4.22.1"
     }

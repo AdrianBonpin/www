@@ -26,6 +26,7 @@ import whatscookin from "../assets/websites/whatscookin.webp";
 import sync2va from "../assets/websites/sync2va.webp";
 import deckyvault from "../assets/websites/deckyvault.png";
 import serialkittenv2 from "../assets/websites/serialkitten-v2.png";
+import gridline from "../assets/websites/gridline.png";
 
 export const projects: Project[] = [
   {
@@ -58,6 +59,17 @@ export const projects: Project[] = [
     link: "https://deckyvault.xyz",
     framework: "Next.js",
     techTags: ["React", "Next.js", "Tailwind", "PostgreSQL", "Elysia"],
+    role: "Solo Developer",
+    year: 2026,
+  },
+  {
+    title: "Gridline",
+    type: "personal",
+    desc: "A lightweight, open-source database GUI for PostgreSQL, MySQL, SQLite, and Redis",
+    img: gridline,
+    link: "https://git.ranio.xyz/adrianbonpin/gridline",
+    framework: "Tauri",
+    techTags: ["Rust", "React", "SQLite"],
     role: "Solo Developer",
     year: 2026,
   },

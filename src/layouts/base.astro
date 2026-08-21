@@ -211,7 +211,7 @@ const breadcrumbItems = (() => {
         />
 
         <!-- JSON-LD: Person -->
-        <script
+        <script is:inline
             type='application/ld+json'
             set:html={JSON.stringify({
                 "@context": "https://schema.org",
@@ -239,7 +239,7 @@ const breadcrumbItems = (() => {
                     },
                 ],
                 sameAs: [
-                    "https://github.com/adrianbonpin",
+                    "https://git.ranio.xyz/adrianbonpin",
                     "https://linkedin.com/in/adrianbonpin",
                 ],
                 knowsAbout: [
@@ -257,7 +257,7 @@ const breadcrumbItems = (() => {
         />
 
         <!-- JSON-LD: WebSite -->
-        <script
+        <script is:inline
             type='application/ld+json'
             set:html={JSON.stringify({
                 "@context": "https://schema.org",
@@ -275,7 +275,7 @@ const breadcrumbItems = (() => {
 
         <!-- JSON-LD: BreadcrumbList -->
         {breadcrumbItems.length > 0 && (
-            <script
+            <script is:inline
                 type='application/ld+json'
                 set:html={JSON.stringify({
                     "@context": "https://schema.org",
@@ -292,7 +292,7 @@ const breadcrumbItems = (() => {
 
         <!-- JSON-LD: Published time for pages that provide it -->
         {publishedTime && (
-            <script
+            <script is:inline
                 type='application/ld+json'
                 set:html={JSON.stringify({
                     "@context": "https://schema.org",
@@ -307,7 +307,7 @@ const breadcrumbItems = (() => {
         )}
 
         <!-- Analytics -->
-        <script
+        <script is:inline
             src='https://stat.ranio.xyz/api/script.js'
             data-site-id='4'
             defer
@@ -330,10 +330,10 @@ const breadcrumbItems = (() => {
                     class='flex flex-row gap-4 [&_a]:hover:underline [&_a]:hover:text-secondary transition-colors'
                 >
                     <a
-                        href='https://github.com/adrianbonpin'
+                        href='https://git.ranio.xyz/adrianbonpin'
                         target='_blank'
                         rel='noopener noreferrer'
-                        >GitHub</a
+                        >Gitea</a
                     >
                     <a
                         href='https://linkedin.com/in/adrianbonpin'

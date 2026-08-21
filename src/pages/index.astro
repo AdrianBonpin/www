@@ -7,10 +7,16 @@ import { skillCategories } from "../data/skills"
 import { siteConfig } from "../data/site-config"
 import { ArrowRightIcon } from "@lucide/astro"
 
-// Pick 4 featured projects (prioritize recent and diverse)
-const featuredProjects = projects
-  .sort((a, b) => b.year - a.year)
-  .slice(0, 4)
+// Featured projects — explicit curated order
+const featuredTitles = [
+  "Wild Rounds Pilipinas Open", // WRPO
+  "GroundsPH",
+  "Gridline",
+  "DeckyVault",
+]
+const featuredProjects = featuredTitles
+  .map((title) => projects.find((p) => p.title === title))
+  .filter((p): p is (typeof projects)[number] => p !== undefined)
 
 // Dynamic stats
 const currentYear = new Date().getFullYear()
@@ -214,7 +220,7 @@ const yearsOfExperience = currentYear - firstProjectYear
   <script>
     const featuredList = document.getElementById('featured-list')
     const featuredPreview = document.getElementById('featured-preview')
-    const featuredImg = document.getElementById('featured-preview-img')
+    const featuredImg = document.getElementById('featured-preview-img') as HTMLImageElement | null
     const featuredLabel = document.getElementById('featured-preview-label')
     if (featuredList && featuredPreview && featuredImg) {
       const items = featuredList.querySelectorAll('.list-item')

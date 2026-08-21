@@ -7,7 +7,7 @@ export const siteConfig: SiteConfig = {
   email: "adrianbonpin@gmail.com",
   location: "Philippines",
   socials: {
-    github: "https://github.com/adrianbonpin",
+    gitea: "https://git.ranio.xyz/adrianbonpin",
     linkedin: "https://linkedin.com/in/adrianbonpin",
   },
   navItems: [

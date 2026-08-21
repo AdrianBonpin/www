@@ -32,6 +32,8 @@ export interface Education {
   year: number
   /** Status: "completed" | "in-progress" | "expected". Defaults to "completed" when absent */
   status?: "completed" | "in-progress" | "expected"
+  /** Optional description or additional context */
+  description?: string
 }
 
 export interface Certificate {
@@ -52,7 +54,7 @@ export interface SiteConfig {
   email: string
   location: string
   socials: {
-    github: string
+    gitea: string
     linkedin: string
   }
   navItems: NavItem[]

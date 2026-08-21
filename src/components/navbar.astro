@@ -102,15 +102,17 @@ function isActive(href: string) {
     const menu = document.getElementById("mobile-menu")
     if (!toggle || !menu) return
 
-    const topBar = toggle.querySelector(".bar-top")
-    const midBar = toggle.querySelector(".bar-mid")
-    const botBar = toggle.querySelector(".bar-bottom")
+    const toggleEl = toggle as HTMLElement
+    const menuEl = menu as HTMLElement
+    const topBar = toggleEl.querySelector<HTMLElement>(".bar-top")
+    const midBar = toggleEl.querySelector<HTMLElement>(".bar-mid")
+    const botBar = toggleEl.querySelector<HTMLElement>(".bar-bottom")
 
     function open() {
-      menu.classList.remove("opacity-0", "-translate-y-2", "pointer-events-none")
-      menu.classList.add("opacity-100", "translate-y-0", "pointer-events-auto")
-      menu.setAttribute("aria-hidden", "false")
-      toggle.setAttribute("aria-expanded", "true")
+      menuEl.classList.remove("opacity-0", "-translate-y-2", "pointer-events-none")
+      menuEl.classList.add("opacity-100", "translate-y-0", "pointer-events-auto")
+      menuEl.setAttribute("aria-hidden", "false")
+      toggleEl.setAttribute("aria-expanded", "true")
 
       if (topBar) { topBar.style.transform = "rotate(45deg) translateY(5px)" }
       if (midBar) { midBar.style.opacity = "0" }
@@ -118,10 +120,10 @@ function isActive(href: string) {
     }
 
     function close() {
-      menu.classList.remove("opacity-100", "translate-y-0", "pointer-events-auto")
-      menu.classList.add("opacity-0", "-translate-y-2", "pointer-events-none")
-      menu.setAttribute("aria-hidden", "true")
-      toggle.setAttribute("aria-expanded", "false")
+      menuEl.classList.remove("opacity-100", "translate-y-0", "pointer-events-auto")
+      menuEl.classList.add("opacity-0", "-translate-y-2", "pointer-events-none")
+      menuEl.setAttribute("aria-hidden", "true")
+      toggleEl.setAttribute("aria-expanded", "false")
 
       if (topBar) { topBar.style.transform = "" }
       if (midBar) { midBar.style.opacity = "" }
@@ -130,7 +132,7 @@ function isActive(href: string) {
 
     let openState = false
 
-    toggle.addEventListener("click", () => {
+    toggleEl.addEventListener("click", () => {
       openState = !openState
       openState ? open() : close()
     })
@@ -149,8 +151,8 @@ function isActive(href: string) {
       }
     })
 
-    menu.addEventListener("click", (e) => {
-      if (e.target === menu) {
+    menuEl.addEventListener("click", (e) => {
+      if (e.target === menuEl) {
         openState = false
         close()
       }

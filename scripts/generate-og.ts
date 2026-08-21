@@ -35,7 +35,7 @@ async function fetchFont(url: string): Promise<ArrayBuffer> {
     return response.arrayBuffer()
 }
 
-function loadLocalFont(path: string): ArrayBuffer {
+function loadLocalFont(path: string): Buffer {
     return readFileSync(path)
 }
 
