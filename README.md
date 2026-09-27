@@ -112,6 +112,8 @@ Visit the live site: [adrianbonpin.com](https://adrianbonpin.com)
     cd www
     ```
 
+    > This repository is hosted on Gitea (primary) and mirrored to [GitHub](https://github.com/AdrianBonpin/www). Both remotes are kept in sync.
+
 2. **Install dependencies**
 
     ```bash
@@ -229,7 +231,7 @@ Copyright (c) 2025 Adrian Bonpin. All rights reserved.
 ## Connect
 
 -   **Portfolio**: [adrianbonpin.com](https://adrianbonpin.com)
--   **Gitea**: [@adrianbonpin](https://git.ranio.xyz/adrianbonpin)
+-   **GitHub**: [@adrianbonpin](https://github.com/adrianbonpin)
 -   **LinkedIn**: [adrianbonpin](https://linkedin.com/in/adrianbonpin)
 -   **Email**: [adrianbonpin@gmail.com](mailto:adrianbonpin@gmail.com)
 -   **Studio**: [DEVGO Studio](https://devgo.studio)

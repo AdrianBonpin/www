@@ -54,7 +54,7 @@ export interface SiteConfig {
   email: string
   location: string
   socials: {
-    gitea: string
+    github: string
     linkedin: string
   }
   navItems: NavItem[]

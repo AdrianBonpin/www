@@ -90,6 +90,13 @@ describe("generate-resume script", () => {
     expect(text).toContain("PhilNITS")
   })
 
+  it("should contain the Cisco Networking Academy certificates", async () => {
+    const pdfBytes = await Bun.file(OUTPUT_PATH).arrayBuffer()
+    const text = extractPdfText(new Uint8Array(pdfBytes))
+    expect(text).toContain("Cisco Networking Academy")
+    expect(text).toContain("CCNAv7")
+  })
+
   it("should show 'Expected 2027' for in-progress education", async () => {
     const pdfBytes = await Bun.file(OUTPUT_PATH).arrayBuffer()
     const text = extractPdfText(new Uint8Array(pdfBytes))

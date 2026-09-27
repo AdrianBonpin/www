@@ -13,6 +13,6 @@ export const sideProjects: SideProject[] = [
       src: rantemper as ImageMetadata,
       alt: "RanTemper split keyboard",
     },
-    link: "https://git.ranio.xyz/adrianbonpin/temper-case-and-config",
+    link: "https://github.com/AdrianBonpin/temper-case-and-config",
   },
 ]

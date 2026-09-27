@@ -3,7 +3,7 @@ import Base from "../layouts/base.astro"
 import ContactForm from "../components/contact-form.astro"
 import ContactAlternatives from "../components/contact-alternatives.astro"
 import { siteConfig } from "../data/site-config"
-import GiteaIcon from "../components/icons/GiteaIcon.astro"
+import GithubIcon from "../components/icons/GithubIcon.astro"
 import LinkedinIcon from "../components/icons/LinkedinIcon.astro"
 import {
   MailIcon,
@@ -25,10 +25,10 @@ const contactLinks = [
     desc: "Best for project inquiries",
   },
   {
-    icon: GiteaIcon,
-    label: "Gitea",
+    icon: GithubIcon,
+    label: "GitHub",
     value: "@adrianbonpin",
-    href: siteConfig.socials.gitea,
+    href: siteConfig.socials.github,
     desc: "Open source & contributions",
     external: true,
   },
@@ -278,7 +278,7 @@ const infoCards = [
         "name": siteConfig.name,
         "email": siteConfig.email,
         "sameAs": [
-          siteConfig.socials.gitea,
+          siteConfig.socials.github,
           siteConfig.socials.linkedin,
         ],
       },

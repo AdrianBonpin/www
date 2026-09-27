@@ -49,6 +49,12 @@ describe("Full build smoke test", () => {
     expect(html).toContain("PhilNITS FE")
   })
 
+  it("should have the Cisco Networking Academy certificates on the resume page", () => {
+    const html = readFileSync(resolve(DIST, "resume/index.html"), "utf-8")
+    expect(html).toContain("Cisco Networking Academy")
+    expect(html).toContain("CCNAv7")
+  })
+
   it("should have Expected 2027 on about page for education", () => {
     const html = readFileSync(resolve(DIST, "about/index.html"), "utf-8")
     expect(html).toContain("Expected 2027")

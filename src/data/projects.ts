@@ -67,7 +67,7 @@ export const projects: Project[] = [
     type: "personal",
     desc: "A lightweight, open-source database GUI for PostgreSQL, MySQL, SQLite, and Redis",
     img: gridline,
-    link: "https://git.ranio.xyz/adrianbonpin/gridline",
+    link: "https://github.com/AdrianBonpin/gridline",
     framework: "Tauri",
     techTags: ["Rust", "React", "SQLite"],
     role: "Solo Developer",

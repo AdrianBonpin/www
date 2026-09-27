@@ -293,7 +293,7 @@ const quickLinks = [
                       rel="noopener noreferrer"
                       class="ml-2 text-xs text-primary/60 hover:text-primary underline underline-offset-2 inline-flex items-center gap-1"
                     >
-                      <span>verify</span>
+                      <span>{cert.url.startsWith("/") ? "view" : "verify"}</span>
                       <ArrowRightIcon class="w-3 h-3" />
                     </a>
                   )}

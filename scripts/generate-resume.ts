@@ -219,7 +219,7 @@ async function buildResume() {
 
   // Contact rows (clear, scannable, ATS-friendly)
   const contactRow1 = `${siteConfig.email}  ·  ${siteConfig.location}  ·  adrianbonpin.com`
-  const contactRow2 = `git.ranio.xyz/adrianbonpin  ·  linkedin.com/in/adrianbonpin`
+  const contactRow2 = `github.com/adrianbonpin  ·  linkedin.com/in/adrianbonpin`
   drawText(ctx, contactRow1, { size: contactSize, color: C.textSecondary, lineHeight: 11 })
   drawText(ctx, contactRow2, { size: contactSize, color: C.textSecondary, lineHeight: 11 })
   ctx.y -= 2
