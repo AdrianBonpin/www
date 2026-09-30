@@ -27,7 +27,7 @@ export interface ResumeProject {
 /** Resume-only copy for featured projects whose portfolio blurb is too thin. */
 const resumeDescOverrides: Record<string, string> = {
   "Wild Rounds Pilipinas Open":
-    "Official tournament website plus a broadcast suite for SerialKitten and DragonAI — realtime API transformation, game data capture, web-based stream assets, and tournament data.",
+    "Official tournament website plus a broadcast suite for SerialKitten — realtime API transformation, game data capture, web-based stream assets, and tournament data.",
 };
 
 /** Work featured on the resume & CV but not listed on the portfolio. */
