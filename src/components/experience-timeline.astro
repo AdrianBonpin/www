@@ -8,6 +8,16 @@ export interface Props {
 }
 
 const { experiences, compact = false } = Astro.props
+
+/** Badge shown next to the company: explicit employmentType, else freelance. */
+function employmentLabel(exp: Experience): string | null {
+  if (exp.employmentType) {
+    return exp.employmentType.charAt(0).toUpperCase() + exp.employmentType.slice(1)
+  }
+  return exp.type === "freelance" ? "Freelance" : null
+}
+
+const items = experiences.map((exp) => ({ exp, label: employmentLabel(exp) }))
 ---
 
 <div class="w-full max-w-7xl mx-auto px-4">
@@ -18,7 +28,7 @@ const { experiences, compact = false } = Astro.props
     )}
 
     <div class="flex flex-col gap-6">
-      {experiences.map((exp) => (
+      {items.map(({ exp, label }) => (
         <div class={`flex flex-row gap-4 ${compact ? "pb-4 border-b border-text/10" : ""}`}>
           {/* Dot on timeline */}
           {!compact && (
@@ -42,8 +52,8 @@ const { experiences, compact = false } = Astro.props
               ) : (
                 exp.company
               )}
-              {exp.type === "freelance" && (
-                <span class="ml-2 text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">Freelance</span>
+              {label && (
+                <span class="ml-2 text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">{label}</span>
               )}
             </p>
             {!compact && exp.highlights.length > 0 && (

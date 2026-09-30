@@ -3,18 +3,13 @@
 import Base from "../layouts/base.astro"
 import HeroRain from "../components/hero-rain.astro"
 import { projects } from "../data/projects"
+import { featuredProjectTitles } from "../data/resume-projects"
 import { skillCategories } from "../data/skills"
 import { siteConfig } from "../data/site-config"
 import { ArrowRightIcon } from "@lucide/astro"
 
-// Featured projects — explicit curated order
-const featuredTitles = [
-  "Wild Rounds Pilipinas Open", // WRPO
-  "GroundsPH",
-  "Gridline",
-  "DeckyVault",
-]
-const featuredProjects = featuredTitles
+// Featured projects — explicit curated order (shared with resume/CV)
+const featuredProjects = featuredProjectTitles
   .map((title) => projects.find((p) => p.title === title))
   .filter((p): p is (typeof projects)[number] => p !== undefined)
 

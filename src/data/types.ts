@@ -22,6 +22,8 @@ export interface Experience {
   endDate?: string   // "YYYY-MM" or undefined if current
   highlights: string[]
   type: "work" | "freelance" | "education"
+  /** Optional employment nature shown as a badge (e.g. "sideline"). */
+  employmentType?: "full-time" | "part-time" | "sideline" | "contract" | "freelance"
 }
 
 export interface Education {

@@ -18,6 +18,8 @@ import { writeFileSync, existsSync, mkdirSync } from "fs"
 import { resolve, dirname } from "path"
 import { PDFDocument, StandardFonts, rgb, PageSizes } from "pdf-lib"
 
+import { wrapText, formatDateRange, employmentLabel } from "./lib/resume-helpers"
+
 const __dirname = dirname(new URL(import.meta.url).pathname)
 
 // ─── Configuration ───
@@ -44,50 +46,8 @@ import { experiences } from "../src/data/experience"
 import { skillCategories } from "../src/data/skills"
 import { education } from "../src/data/education"
 import { certificates } from "../src/data/certificates"
-
-// Inline project text data (avoid importing Astro image assets in Node.js builds)
-const projects = [
-  {
-    title: "DeckyVault",
-    type: "personal" as const,
-    desc: "A fast, modern browser for finding game benchmarks, settings, and guides for Steam Deck OLED \u0026 LCD",
-    link: "https://deckyvault.xyz",
-    framework: "NextJs",
-    techTags: ["React", "Next.js", "Tailwind", "PostgreSQL", "Elysia"],
-    role: "Solo Developer",
-    year: 2026,
-  },
-  {
-    title: "GroundsPH",
-    type: "personal" as const,
-    desc: "Community-driven cafe discovery platform featuring leaderboards, reviews, and curated Filipino coffee culture",
-    link: "https://grounds.ph",
-    framework: "NextJs",
-    techTags: ["React", "Next.js", "Tailwind", "Mapbox"],
-    role: "Solo Developer",
-    year: 2026,
-  },
-  {
-    title: "InkSight",
-    type: "client" as const,
-    desc: "Tattoo portfolio management and booking suite built for RDMD Studio artists and clients",
-    link: "https://inksight.rdmdstudio.com",
-    framework: "NextJs",
-    techTags: ["React", "Next.js", "Tailwind"],
-    role: "Solo Developer",
-    year: 2026,
-  },
-  {
-    title: "RDMD Studio",
-    type: "client" as const,
-    desc: "Multi-location tattoo and piercing studio with branches in Cebu and Manila, plus an in-house apparel line",
-    link: "https://rdmdstudio.com",
-    framework: "Astro",
-    techTags: ["Astro", "Tailwind"],
-    role: "Solo Developer",
-    year: 2026,
-  },
-]
+import { resumeProjects } from "../src/data/resume-projects"
+import { resumeSummary } from "../src/data/resume-summary"
 
 // ─── Types ───
 interface LayoutContext {
@@ -101,33 +61,6 @@ interface LayoutContext {
 }
 
 // ─── Helpers ───
-function wrapText(text: string, maxWidth: number, font: any, size: number): string[] {
-  const words = text.split(" ")
-  const lines: string[] = []
-  let current = ""
-  for (const word of words) {
-    const test = current ? current + " " + word : word
-    const w = font.widthOfTextAtSize(test, size)
-    if (w > maxWidth && current) {
-      lines.push(current)
-      current = word
-    } else {
-      current = test
-    }
-  }
-  if (current) lines.push(current)
-  return lines
-}
-
-function formatDateRange(start: string, end?: string): string {
-  const fmt = (d: string) => {
-    const [y, m] = d.split("-")
-    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
-    return `${months[parseInt(m)-1]} ${y}`
-  }
-  return `${fmt(start)} - ${end ? fmt(end) : "Present"}`
-}
-
 function drawLine(ctx: LayoutContext, x1: number, y1: number, x2: number, y2: number, color = C.rule, thickness = 0.5) {
   ctx.page.drawLine({ start: { x: x1, y: y1 }, end: { x: x2, y: y2 }, thickness, color })
 }
@@ -229,10 +162,7 @@ async function buildResume() {
   ctx.y -= 14
 
   // ── PROFESSIONAL SUMMARY ──
-  const summary =
-    "Full-stack developer with 3+ years of experience building custom web applications and websites. Specialized in Next.js, Astro, React, and TypeScript with a strong focus on performance, accessibility, and clean architecture. Proven track record of delivering 10+ client projects across diverse industries including creative agencies, e-commerce, and education. Passionate about modern tooling, developer experience, and shipping products that look great and feel effortless to use."
-
-  drawText(ctx, summary, { size: 10, color: C.textSecondary, lineHeight: 14, maxWidth: CONTENT_WIDTH })
+  drawText(ctx, resumeSummary, { size: 10, color: C.textSecondary, lineHeight: 14, maxWidth: CONTENT_WIDTH })
   ctx.y -= 8
 
   // ── PROFESSIONAL EXPERIENCE ──
@@ -246,7 +176,7 @@ async function buildResume() {
     const dateText = formatDateRange(exp.startDate, exp.endDate)
     const dateW = ctx.fontRegular.widthOfTextAtSize(dateText, dateSize)
 
-    ctx.page.drawText(`${exp.role}, ${exp.company}`, {
+    ctx.page.drawText(`${exp.role}, ${exp.company}${employmentLabel(exp) ? ` (${employmentLabel(exp)})` : ""}`, {
       x: ctx.x,
       y: ctx.y,
       size: roleSize,
@@ -294,11 +224,7 @@ async function buildResume() {
   checkPage(70)
   sectionHeader(ctx, "Selected Projects")
 
-  const topProjects = projects
-    .filter(p => p.type === "client" || ["DeckyVault", "GroundsPH", "WhatsCookin?"].includes(p.title))
-    .slice(0, 4)
-
-  for (const proj of topProjects) {
+  for (const proj of resumeProjects) {
     checkPage(35)
     const projSize = 10
     const metaSize = 9
@@ -321,7 +247,9 @@ async function buildResume() {
     })
     ctx.y -= 12
 
-    const meta = `${proj.desc}  |  ${proj.techTags.slice(0, 4).join(", ")}`
+    const meta = [proj.desc, proj.techTags.slice(0, 4).join(", ")]
+      .filter(Boolean)
+      .join("  |  ")
     drawText(ctx, meta, { size: 9, color: C.textSecondary, lineHeight: 12, maxWidth: CONTENT_WIDTH })
     ctx.y -= 4
   }

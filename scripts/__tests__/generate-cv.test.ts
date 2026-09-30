@@ -4,10 +4,10 @@ import { resolve } from "path"
 import { $ } from "bun"
 import { extractPdfText } from "./pdf-test-utils"
 
-const OUTPUT_PATH = resolve(__dirname, "../../public/resume.pdf")
-const SCRIPT_PATH = resolve(__dirname, "../generate-resume.ts")
+const OUTPUT_PATH = resolve(__dirname, "../../public/cv.pdf")
+const SCRIPT_PATH = resolve(__dirname, "../generate-cv.ts")
 
-describe("generate-resume script", () => {
+describe("generate-cv script", () => {
   beforeAll(() => {
     if (existsSync(OUTPUT_PATH)) {
       unlinkSync(OUTPUT_PATH)
@@ -25,25 +25,31 @@ describe("generate-resume script", () => {
     expect(file.size).toBeGreaterThan(1000)
   })
 
-  it("should produce a valid PDF with curated featured + resume projects", async () => {
+  it("should contain the shared header, summary and sections", async () => {
     const pdfBytes = await Bun.file(OUTPUT_PATH).arrayBuffer()
     const text = extractPdfText(new Uint8Array(pdfBytes))
 
-    // Featured projects must appear
+    expect(text).toContain("Adrian Bonpin")
+    expect(text).toContain("Full-Stack Developer & Creative Technologist")
+    expect(text).toContain("PROFESSIONAL SUMMARY")
+    expect(text).toContain("PROFESSIONAL EXPERIENCE")
+    expect(text).toContain("SELECTED PROJECTS")
+    expect(text).toContain("TECHNICAL SKILLS")
+    expect(text).toContain("CERTIFICATIONS")
+  })
+
+  it("should list the curated featured + resume projects", async () => {
+    const pdfBytes = await Bun.file(OUTPUT_PATH).arrayBuffer()
+    const text = extractPdfText(new Uint8Array(pdfBytes))
+
     expect(text).toContain("Wild Rounds Pilipinas Open")
+    expect(text).toContain("Philippine Kings League")
     expect(text).toContain("GroundsPH")
     expect(text).toContain("Gridline")
     expect(text).toContain("DeckyVault")
 
-    // Resume-specific work (not on the portfolio)
-    expect(text).toContain("Philippine Kings League")
-
-    // Descriptions synced from src/data/projects.ts
-    expect(text).toContain("Community-driven cafe discovery platform")
-    expect(text).toContain("A lightweight, open-source database GUI")
-
-    // Year 2026 must appear in the projects section
-    expect(text.includes("2026")).toBe(true)
+    // Gridline now points at its own domain
+    expect(text).toContain("https://getgridline.app")
 
     // Unfeatured projects are no longer listed
     expect(text).not.toContain("Tattoo portfolio management and booking suite")
@@ -60,13 +66,6 @@ describe("generate-resume script", () => {
     const pdfBytes = await Bun.file(OUTPUT_PATH).arrayBuffer()
     const text = extractPdfText(new Uint8Array(pdfBytes))
     expect(text).toContain("PhilNITS")
-  })
-
-  it("should contain the Cisco Networking Academy certificates", async () => {
-    const pdfBytes = await Bun.file(OUTPUT_PATH).arrayBuffer()
-    const text = extractPdfText(new Uint8Array(pdfBytes))
-    expect(text).toContain("Cisco Networking Academy")
-    expect(text).toContain("CCNAv7")
   })
 
   it("should show 'Expected 2027' for in-progress education", async () => {

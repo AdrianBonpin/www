@@ -7,6 +7,7 @@ export const experiences: Experience[] = [
     company: "DEVGO Studio",
     companyUrl: "https://devgo.studio",
     startDate: "2024-01",
+    employmentType: "sideline",
     highlights: [
       "Built 10+ custom websites and web applications for clients across industries",
       "Developed with Next.js, Astro, Tailwind CSS, and Cloudflare deployments",

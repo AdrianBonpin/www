@@ -4,11 +4,12 @@
     "version": "1.3.0",
     "scripts": {
         "dev": "astro dev",
-        "build": "npx tsx scripts/generate-og.ts && npx tsx scripts/generate-resume.ts && astro build",
+        "build": "npx tsx scripts/generate-og.ts && npx tsx scripts/generate-resume.ts && npx tsx scripts/generate-cv.ts && astro build",
         "preview": "astro preview",
         "astro": "astro",
         "generate-og": "npx tsx scripts/generate-og.ts",
-        "generate-resume": "npx tsx scripts/generate-resume.ts"
+        "generate-resume": "npx tsx scripts/generate-resume.ts",
+        "generate-cv": "npx tsx scripts/generate-cv.ts"
     },
     "dependencies": {
         "@astrojs/check": "^0.9.10",
